@@ -1,0 +1,28 @@
+clear;
+clc;
+close all;
+
+m = 2;
+n = 6;
+
+
+A = [w' ; ones(n,1)'];
+d = 10*rand(n,1);
+v1 = zeros(n,1);    
+v2 = ones(n,1);
+x = (v1 + v2)/2;
+b = [ret ; 1];
+
+y_initial = 10*rand(m,1);
+
+
+
+
+L = m+1;
+
+y_initial = rand(n,2);
+
+s7 = struct('y_initial', y_initial, 'c',c, 'L',L, 'f_opt_cvx',f_opt_12b_cvx, 'cost_func',@(x) ex_12b_cost_func(x,d), 'argmax',@(w) ex_12b_argmax(w,d), 'transform_A',@(u) ex_12b_transform_A(u), 'proj_1',@(x) ex_12b_proj_1(x,A,b), 'proj_2',@(x) ex_12b_proj_2(x,v1,v2), 'constraint',@(x) ex_12b_constraint(x,A,b,v1,v2));
+
+tic;
+[x_opt_12b_fdpg,f_opt_12b_fdpg,x_all_12b_fdpg,f_all_12b_fdpg,iter_12b_fdpg] = fdpg_proj_method(s7);
