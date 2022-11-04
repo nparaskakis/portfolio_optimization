@@ -1,0 +1,359 @@
+
+\documentclass{beamer}
+\usetheme{Boadilla}
+\setbeamertemplate{caption}[numbered]
+\usepackage{ragged2e}
+\usepackage{xcolor}
+\usepackage{mathtools}
+\usepackage{algorithm2e}
+
+
+\makeatletter
+\setbeamertemplate{footline}
+{
+  \leavevmode
+  \hbox{
+  \begin{beamercolorbox}[wd=.8\paperwidth,ht=2.25ex,dp=1ex,center]{title in head/foot}
+    \usebeamerfont{title in head/foot}\insertshorttitle
+  \end{beamercolorbox}%
+  \begin{beamercolorbox}[wd=.2\paperwidth,ht=2.25ex,dp=1ex,center]{date in head/foot}
+    \insertframenumber{} / \inserttotalframenumber
+  \end{beamercolorbox}}%
+  \vskip0pt%
+}
+\makeatother
+
+
+
+\title{\textbf{Portfolio Optimization}}
+\subtitle{An Application of Convex Optimization}
+\author{A project as part of the course:\\"Advanced Topics in Convex Optimization"\\\vspace{0.4cm}Supplementary Document\\\textbf{Statistical Terms}\\\vspace{0.4cm}}
+\institute{Paraskakis Nikolaos, Undergraduate Student\\\vspace{0.4cm}School of Electrical \& Computer Engineering\\Technical University of Crete}
+\date{\footnotesize \today}
+
+
+
+
+
+
+
+
+\AtBeginSection[]
+{
+  \begin{frame}{Plan} 
+    \frametitle{Contents}
+    \tableofcontents[sectionstyle=show/hide,subsectionstyle=show/show/hide]
+  \end{frame}
+}
+
+
+
+
+
+\begin{document}
+
+
+\begin{frame}
+\titlepage
+\end{frame}
+
+
+\section{Statistical Terms}
+
+
+
+
+
+
+
+
+
+\subsection{Expected Value}
+
+\begin{frame}
+\frametitle{\textbf{Expected Value}}
+
+\begin{definition}
+\justifying
+The \textbf{expected value} is an anticipated average value for an investment at some point in the future.
+\end{definition}
+
+\vspace{0.4cm}
+\justifying
+Investors use expected variance to estimate the worthiness of investments, often in relation to their relative riskiness.
+
+\vspace{0.4cm}
+\justifying
+Modern portfolio theory (MPT), for instance, attempts to solve for the optimal portfolio allocation based on investments' expected values and standard deviations (i.e. risk).
+
+\vspace{0.4cm}
+\justifying
+By calculating expected values, investors can choose the scenario most likely to give the desired outcome.
+
+\end{frame}
+
+
+
+
+
+
+
+\begin{frame}
+
+\justifying
+For a discrete random variable, we have the following formula:
+
+\begin{block}
+\justifying
+$$
+\mu = E[\mathbf{X}] = \sum_{i=1}^{n} {x_{i}P(x_{i})}
+$$
+\end{block}
+
+\vspace{0.2cm}
+\justifying
+For a continuous random variable, we have the following formula:
+
+\begin{block}
+\justifying
+$$
+\mu = E[\mathbf{X}] = \int_{\mathbb{R}} x \cdot f(x)dx
+$$
+\end{block}
+
+\vspace{0.2cm}
+\justifying
+where
+
+\vspace{0.2cm}
+\justifying
+$x_i$ : Value of the $i$-th point in the data set\\
+$p_{i}$ :  Probability mass function value at the $i$-th point in the data set\\
+$n$ : Number of values in the data set\\
+$f(x)$ : Probability density function for random variable $\mathbf{X}$
+
+\end{frame}
+
+
+
+
+
+
+
+
+
+
+\subsection{Variance}
+
+\begin{frame}
+\frametitle{\textbf{Variance}}
+
+\begin{definition}
+\justifying
+The term \textbf{variance} refers to a statistical measurement of the spread between numbers in a data set. More specifically, variance measures how far each number in the set is from the mean (average), and thus from every other number in the set.
+\end{definition}
+
+\vspace{0.4cm}
+\justifying
+Variance is often depicted by this symbol: $\sigma^{2}$. It is used by both analysts and traders to determine volatility and market security.
+
+\vspace{0.4cm}
+\justifying
+In statistics, for a random variable $\mathbf{X}$, it holds that:
+
+\begin{block}
+\justifying
+$$
+Var[\mathbf{X}] = Cov\left(\mathbf{X},\mathbf{X}\right) = E[\left(\mathbf{X} - E[\mathbf{X}]\right)^{2}] = E[\mathbf{X}^{2}] - \left(E[\mathbf{X}]\right)^{2}
+$$
+\end{block}
+
+
+\end{frame}
+
+
+
+
+
+
+\begin{frame}
+
+\justifying
+For a discrete random variable, we have the following formula:
+
+\begin{block}
+\justifying
+$$
+Var[\mathbf{X}] = \sigma^{2} = \sum_{i=1}^{n} p_{i} \cdot \left(x_{i} - \mu \right)^{2}
+$$
+\end{block}
+
+\vspace{0.2cm}
+\justifying
+For a continuous random variable, we have the following formula:
+
+\begin{block}
+\justifying
+$$
+Var[\mathbf{X}] = \sigma^{2} = \int_{\mathbb{R}} \left(x - \mu \right)^{2} \cdot f(x)dx
+$$
+\end{block}
+
+\vspace{0.2cm}
+\justifying
+where $\mu$ is the expected value calculated as explained before and also
+
+\vspace{0.2cm}
+\justifying
+$x_i$ : Value of the $i$-th point in the data set\\
+$p_{i}$ :  Probability mass function value at the $i$-th point in the data set\\
+$n$ : Number of values in the data set\\
+$f(x)$ : Probability density function for random variable $\mathbf{X}$
+
+\end{frame}
+
+
+
+
+
+
+\subsection{Standard Deviation}
+
+\begin{frame}
+\frametitle{\textbf{Standard Deviation}}
+
+\begin{definition}
+\justifying
+\textbf{Standard deviation} is a statistic that measures the dispersion of a dataset relative to its mean and is calculated as the square root of the variance by determining each data point's deviation relative to the mean (the consistency of an investments returns over a period of time).
+\end{definition}
+
+\vspace{0.2cm}
+\justifying
+Standard deviation is often depicted by this symbol: $\sigma$.
+
+\vspace{0.2cm}
+\justifying
+If the data points are further from the mean, there is a higher deviation within the data set; thus, the more spread out the data, the higher the standard deviation.
+
+\vspace{0.2cm}
+\justifying
+In statistics, it holds the following  formula:
+
+\begin{block}
+\justifying
+$$
+\sigma = \sqrt{Var[\mathbf{X}]} = \sqrt{Cov(\mathbf{X},\mathbf{X})} = \sqrt{E[(\mathbf{X} - E[\mathbf{X}])^{2}]} = \sqrt{E[\mathbf{X}^{2}] - \left(E[\mathbf{X}]\right)^{2}}
+$$
+\end{block}
+
+\end{frame}
+
+
+
+
+
+\subsection{Covariance}
+
+\begin{frame}
+\frametitle{\textbf{Covariance}}
+
+\begin{definition}
+\justifying
+\textbf{Covariance} measures the directional relationship between the returns on two assets. A positive covariance means that asset returns move together while a negative covariance means they move inversely.
+\end{definition}
+
+\vspace{0.8cm}
+\justifying
+Covariance evaluates how the mean values of two random variables move together. In finance, covariances are calculated to help diversify security holdings.
+
+\vspace{0.8cm}
+\justifying
+If stock A's return moves higher whenever stock B's return moves higher and the same relationship is found when each stock's return decreases, then these stocks are said to have positive covariance.
+
+
+
+\end{frame}
+
+
+
+
+
+
+\begin{frame}
+
+\justifying
+In statistics, as said above, covariance is a measure of the joint variability of two random variables. We have the following formula to compute it:
+
+\begin{block}
+\justifying
+$$
+Cov(\mathbf{X},\mathbf{Y}) = E[\left(\mathbf{X} - E[\mathbf{X}]\right)\left(\mathbf{Y} - E[\mathbf{Y}]\right)] = E[\mathbf{XY}] - E[\mathbf{X}]E[\mathbf{Y}]
+$$
+\end{block}
+
+\vspace{1cm}
+\justifying
+Another way to compute covariance is by using correlation $\rho$ as follows:
+
+\begin{block}
+\justifying
+$$
+Cov(\mathbf{X},\mathbf{Y}) = \rho_{\mathbf{X},\mathbf{Y}}\cdot\sigma_{\mathbf{X}} \cdot \sigma_{\mathbf{Y}}
+$$
+\end{block}
+
+\end{frame}
+
+
+
+
+
+
+
+\subsection{Correlation}
+
+\begin{frame}
+\frametitle{\textbf{Correlation}}
+
+\begin{definition}
+\justifying
+\textbf{Correlation}, in the finance and investment industries, is a statistic that measures the degree to which two securities move in relation to each other. Correlations are used in advanced portfolio management, computed as the correlation coefficient, which has values range between $-1$ and $+1$.
+\end{definition}
+
+\vspace{0.8cm}
+\justifying
+\begin{itemize}
+	\justifying
+	\item A perfect positive correlation means that the correlation coefficient is exactly $1$. This implies that as one security moves, either up or down, the other security moves in lockstep, in the same direction.
+	\item A perfect negative correlation with value exactly $-1$ means that two assets move in opposite directions.
+	\item A zero correlation implies no linear relationship at all.
+\end{itemize}
+
+\end{frame}
+
+
+
+
+
+\begin{frame}
+
+\justifying
+In statistics, the formula to compute correlation between two random variables is the following:
+
+\begin{block}
+\justifying
+$$
+\rho_{\mathbf{X},\mathbf{Y}} = Corr(\mathbf{X},\mathbf{Y}) = \frac{Cov(\mathbf{X},\mathbf{Y})}{\sigma_{\mathbf{X}}\cdot\sigma_{\mathbf{Y}}}
+$$
+\end{block}
+
+\vspace{0.8cm}
+\justifying
+If the variables are independent, correlation coefficient is $0$, but the converse is not true because the correlation coefficient detects only linear dependencies between two variables.
+
+\end{frame}
+
+
+
+
+\end{document}

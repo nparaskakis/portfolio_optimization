@@ -1,0 +1,4 @@
+\beamer@sectionintoc {1}{Analytic Solutions}{2}{0}{1}
+\beamer@subsectionintoc {1}{1}{Minimum volatility}{3}{0}{1}
+\beamer@subsectionintoc {1}{2}{Minimum volatility for a given target return}{13}{0}{1}
+\beamer@subsectionintoc {1}{3}{Maximum quadratic utility given some risk aversion}{20}{0}{1}

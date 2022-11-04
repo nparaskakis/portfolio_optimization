@@ -1,0 +1,6 @@
+\beamer@sectionintoc {1}{Statistical Terms}{2}{0}{1}
+\beamer@subsectionintoc {1}{1}{Expected Value}{3}{0}{1}
+\beamer@subsectionintoc {1}{2}{Variance}{5}{0}{1}
+\beamer@subsectionintoc {1}{3}{Standard Deviation}{7}{0}{1}
+\beamer@subsectionintoc {1}{4}{Covariance}{8}{0}{1}
+\beamer@subsectionintoc {1}{5}{Correlation}{10}{0}{1}

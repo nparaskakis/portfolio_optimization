@@ -1,0 +1,4 @@
+\beamer@sectionintoc {1}{Algorithmic Solutions - Programming}{2}{0}{1}
+\beamer@subsectionintoc {1}{1}{Projected (Sub)Gradient Method}{3}{0}{1}
+\beamer@subsectionintoc {1}{2}{Interior Point Method}{8}{0}{1}
+\beamer@subsectionintoc {1}{3}{Fast Dual Proximal Gradient (FDPG) Method}{42}{0}{1}

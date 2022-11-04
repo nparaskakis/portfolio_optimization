@@ -1,0 +1,1002 @@
+\documentclass{beamer}
+\usetheme{Boadilla}
+\setbeamertemplate{caption}[numbered]
+\usepackage{ragged2e}
+\usepackage{xcolor}
+\usepackage{mathtools}
+\usepackage{algorithm2e}
+
+
+\makeatletter
+\setbeamertemplate{footline}
+{
+  \leavevmode
+  \hbox{
+  \begin{beamercolorbox}[wd=.8\paperwidth,ht=2.25ex,dp=1ex,center]{title in head/foot}
+    \usebeamerfont{title in head/foot}\insertshorttitle
+  \end{beamercolorbox}%
+  \begin{beamercolorbox}[wd=.2\paperwidth,ht=2.25ex,dp=1ex,center]{date in head/foot}
+    \insertframenumber{} / \inserttotalframenumber
+  \end{beamercolorbox}}%
+  \vskip0pt%
+}
+\makeatother
+
+
+
+\title{\textbf{Portfolio Optimization}}
+\subtitle{An Application of Convex Optimization}
+\author{A project as part of the course:\\"Advanced Topics in Convex Optimization"\\\vspace{0.4cm}Supplementary Document\\\textbf{Analytic Solutions}\\\vspace{0.4cm}}
+\institute{Paraskakis Nikolaos, Undergraduate Student\\\vspace{0.4cm}School of Electrical \& Computer Engineering\\Technical University of Crete}
+\date{\footnotesize \today}
+
+
+
+
+
+
+
+
+\AtBeginSection[]
+{
+  \begin{frame}{Plan} 
+    \frametitle{Contents}
+    \tableofcontents[sectionstyle=show/hide,subsectionstyle=show/show/hide]
+  \end{frame}
+}
+
+
+
+
+
+\begin{document}
+
+
+\begin{frame}
+\titlepage
+\end{frame}
+
+
+
+
+
+\section{Analytic Solutions}
+
+
+
+
+
+
+
+
+
+
+\subsection{Minimum volatility}
+
+\begin{frame}
+\frametitle{\textbf{Minimum volatility}}
+
+\justifying
+Let a portfolio as initially described above. We want to obtain the optima; vector $\mathbf{w}$ that minimizes portfolio's volatility (risk). To do so, we have to solve the following optimization problem:
+
+\vspace{0.2cm}
+\justifying
+\begin{equation}
+\label{eq:6}
+\begin{aligned}
+\min_{\mathbf{w}} \quad & f\left(\mathbf{w}\right) = \frac{1}{2}\mathbf{w}^{T}\mathbf{\Sigma}\mathbf{w} \\
+\textrm{s.t.} \quad & h\left(\mathbf{w}\right) = 1 - \mathbf{1}^{T} \mathbf{w} = 0 \\
+                             & g_{1}\left(\mathbf{w}\right) = \mathbf{b}_{\ell} - \mathbf{w} \preccurlyeq \mathbf{0} \\
+                             & g_{2}\left(\mathbf{w}\right) = \mathbf{w} - \mathbf{b}_{u} \preccurlyeq \mathbf{0} \\
+\end{aligned}
+\end{equation}
+
+\end{frame}
+
+
+
+
+
+
+\begin{frame}
+
+\justifying
+The Lagrangian for problem \eqref{eq:6} is the following:
+
+\justifying
+\begin{equation*}
+\begin{aligned}
+	L\left(\mathbf{w},\lambda,\boldsymbol\theta,\boldsymbol\phi\right) & = f\left(\mathbf{w}\right) + \lambda h\left(\mathbf{w}\right) + \boldsymbol\theta^{T} g_{1}\left(\mathbf{w}\right) + \boldsymbol\phi^{T} g_{2}\left(\mathbf{w}\right) = \\
+	& = \frac{1}{2}\mathbf{w}^{T}\mathbf{\Sigma}\mathbf{w} - \lambda \left(\mathbf{1}^{T} \mathbf{w} - 1\right) - \boldsymbol\theta^{T} \left( \mathbf{w}-\mathbf{b}_{\ell} \right) + \boldsymbol\phi^{T} \left( \mathbf{w}-\mathbf{b}_{u} \right)
+\end{aligned}
+\end{equation*}
+
+\vspace{0.2cm}
+\justifying
+As we are doing a minimization here, the dual is a maximization problem, namely,
+
+\justifying
+\begin{equation*}
+	q \left(\lambda, \boldsymbol\theta, \boldsymbol\phi \right) = \inf_{\mathbf{w}} L\left(\mathbf{w},\lambda,\boldsymbol\theta,\boldsymbol\phi\right)
+\end{equation*}
+
+\vspace{0.2cm}
+\justifying
+and according to the max-min inequality we have the weak-duality property
+
+\justifying
+\begin{equation*}
+	\sup_{\lambda, \boldsymbol\theta, \boldsymbol\phi} \inf_{\mathbf{w}} L\left(\mathbf{w},\lambda,\boldsymbol\theta,\boldsymbol\phi\right) \leq \inf_{\mathbf{w}} \sup_{\lambda, \boldsymbol\theta, \boldsymbol\phi} L\left(\mathbf{w},\lambda,\boldsymbol\theta,\boldsymbol\phi\right)
+\end{equation*}
+
+\vspace{0.2cm}
+\justifying
+and the equality holds if we have strong duality. 
+
+\end{frame}
+
+
+
+
+\begin{frame}
+
+\justifying
+The RHS is the solution to the optimization problem and the LHS is the dual problem. Therefore the dual must be less than the optimal solution in the original problem:
+
+\justifying
+\begin{equation*}
+	q \left(\lambda, \boldsymbol\theta, \boldsymbol\phi \right) \leq \inf_{\mathbf{w}} \sup_{\lambda, \boldsymbol\theta, \boldsymbol\phi} L\left(\mathbf{w},\lambda,\boldsymbol\theta,\boldsymbol\phi\right)
+\end{equation*}
+
+\vspace{0.2cm}
+\justifying
+All in all, we have that the optimal solution is given by:
+
+\justifying
+\begin{equation*}
+	\mathbf{w}^{*} = \arg \min L\left(\mathbf{w},\lambda,\boldsymbol\theta,\boldsymbol\phi\right)
+\end{equation*}
+
+\end{frame}
+
+
+
+
+
+\begin{frame}
+
+\justifying
+The KKT conditions state that
+
+\vspace{0.2cm}
+\justifying
+\begin{itemize}
+	\item[1.] $\nabla L\left(\mathbf{w}^{*},\lambda,\boldsymbol\theta,\boldsymbol\phi\right) = \mathbf{0}$ at the optimal solution $\mathbf{w}^{*}$.
+	\item[2.] Primal constraints are satisfied for $\mathbf{w}^{*}$.
+	\item[3.] Dual constraints $\boldsymbol\theta \succcurlyeq \mathbf{0}$ and $\boldsymbol\phi \succcurlyeq \mathbf{0}$ are satisfied, i.e. the Lagrange multipliers for inequality constraints are non-negative.
+	\item[4.] Complementary slackness: $\boldsymbol\theta \odot \left( \mathbf{w}-\mathbf{b}_{\ell} \right) = \mathbf{0}$ and $\boldsymbol\phi \odot \left( \mathbf{w}-\mathbf{b}_{u} \right) = \mathbf{0}$,  i.e. the Lagrange multiplier will be zero if the corresponding inequality constraint is inactive.
+\end{itemize}
+
+\end{frame}
+
+
+\begin{frame}
+
+\justifying
+The first condition states that
+
+\justifying
+\begin{equation*}
+	\nabla_{\mathbf{w}} L\left(\mathbf{w},\lambda,\boldsymbol\theta,\boldsymbol\phi\right) = \mathbf{\Sigma}\mathbf{w} - \lambda \mathbf{1} - \boldsymbol\theta + \boldsymbol\phi = \mathbf{0}
+\end{equation*}
+
+\vspace{0.2cm}
+\justifying
+the second condition states that
+
+\justifying
+\begin{equation*}
+\begin{aligned}
+	\nabla_{\lambda} L\left(\mathbf{w},\lambda,\boldsymbol\theta,\boldsymbol\phi\right) = \mathbf{1}^{T}\mathbf{w} - 1 & = 0\\
+	\mathbf{w} - \mathbf{b}_{\ell} & \succcurlyeq \mathbf{0}\\
+	\mathbf{w} - \mathbf{b}_{u} & \preccurlyeq \mathbf{0}\\
+\end{aligned}
+\end{equation*}
+
+\justifying
+the third condition states that
+
+\justifying
+\begin{equation*}
+\begin{aligned}
+	\boldsymbol\theta & \succcurlyeq \mathbf{0} \\
+	\boldsymbol\phi & \succcurlyeq \mathbf{0}\\
+\end{aligned}
+\end{equation*}
+
+\vspace{0.2cm}
+\justifying
+and the fourth condition states that
+
+\justifying
+\begin{equation*}
+\begin{aligned}
+	\boldsymbol\theta \odot \left( \mathbf{w}-\mathbf{b}_{\ell} \right) & = \mathbf{0} \\
+	\boldsymbol\phi \odot \left( \mathbf{w}-\mathbf{b}_{u} \right) & = \mathbf{0} \\
+\end{aligned}
+\end{equation*}
+
+\end{frame}
+
+
+
+\begin{frame}
+
+\justifying
+Given that $\mathbf{w}, \boldsymbol\theta, \boldsymbol\phi$ are vectors of $n$ elements and $\lambda$ is scalar, we have $3n+1$ unknowns. Also, from the four conditions we have $n+1+0+2n=3n+1$ equalities and $0+2n+2n+0=4n$ inequalities. This should sufficient to provide a solution, but note that the equations from the fourth condition are nonlinear as it includes $\boldsymbol\theta \odot \mathbf{w}$ and $\boldsymbol\phi \odot \mathbf{w}$ terms. To make it a system of linear equations, we can consider various combination of activeness of inequality constraints to simplify it. It would be tremendously easier if none of the inequality constraints are active (e.g., when $\mathbf{b}_{\ell} = -\boldsymbol\infty$ and $\mathbf{b}_{u} = \boldsymbol\infty$, which for sure $\boldsymbol\theta=\boldsymbol\phi=\mathbf{0}$ based on the complementary slackness), in this case we have:
+
+\justifying
+\begin{equation*}
+\begin{aligned}
+	& \mathbf{\Sigma}\mathbf{w} - \lambda \mathbf{1} = \mathbf{0} \quad \Rightarrow \\
+	\Rightarrow \quad & \mathbf{\Sigma}\mathbf{w} = \lambda \mathbf{1} \quad \Rightarrow \\
+	\Rightarrow \quad & \mathbf{w} = \lambda \mathbf{\Sigma}^{-1}\mathbf{1} \\
+\end{aligned}
+\end{equation*}
+
+
+
+\end{frame}
+
+
+
+
+\begin{frame}
+
+\justifying
+By substituting on the equality constraint we have:
+
+\justifying
+\begin{equation*}
+\begin{aligned}
+	& \mathbf{1}^{T}\mathbf{w} - 1 = 0 \quad \Rightarrow \\
+	\Rightarrow \quad & \mathbf{1}^{T} \left(\lambda \mathbf{\Sigma}^{-1}\mathbf{1}\right) - 1 = 0 \quad \Rightarrow \\
+	\Rightarrow \quad & \lambda \mathbf{1}^{T} \mathbf{\Sigma}^{-1}\mathbf{1} - 1 = 0 \quad \Rightarrow \\
+	\Rightarrow \quad & \Bigr[\mathbf{1}^{T} \mathbf{\Sigma}^{-1}\mathbf{1}\Bigr]\lambda = 1 \quad \Rightarrow \\
+	\Rightarrow \quad & \lambda = \Bigr[\mathbf{1}^{T} \mathbf{\Sigma}^{-1}\mathbf{1}\Bigr]^{-1} \quad \Rightarrow \\
+	\Rightarrow \quad & \lambda = \frac{1}{\mathbf{1}^{T} \mathbf{\Sigma}^{-1}\mathbf{1}} \\
+\end{aligned}
+\end{equation*}
+
+\vspace{0.2cm}
+\justifying
+Finally, by substituting back we have:
+
+\justifying
+\begin{equation*}
+\begin{aligned}
+	\mathbf{w} = \frac{1}{\mathbf{1}^{T} \mathbf{\Sigma}^{-1}\mathbf{1}} \cdot \mathbf{\Sigma}^{-1}\mathbf{1}
+\end{aligned}
+\end{equation*}
+
+\end{frame}
+
+
+
+
+
+\begin{frame}
+
+\justifying
+But the solution under this condition must not violate the second conditions, $\mathbf{b}_{\ell} \preccurlyeq \mathbf{w}^{*} \preccurlyeq \mathbf{b}_{u}$. In fact, we can also solve for both $\mathbf{w}$ and $\boldsymbol\lambda$ together in a matrix form equation as shown below:
+
+\justifying
+\begin{equation*}
+\begin{aligned}
+	& \begin{cases}
+	\mathbf{\Sigma}\mathbf{w} - \lambda \mathbf{1} = 0 \\
+	\mathbf{1}^{T}\mathbf{w} - 1 = 0
+	\end{cases}
+	\quad \Rightarrow \\
+	& \begin{bmatrix}
+		\mathbf{\Sigma} & \mathbf{1} \\
+		\mathbf{1}^{T} & 0
+	   \end{bmatrix}
+	   \cdot
+	   \begin{bmatrix}
+	   	\mathbf{w} \\
+		-\lambda
+	  \end{bmatrix}
+	  =
+	  \begin{bmatrix}
+	  	0 \\ 
+		1
+	\end{bmatrix}
+	\quad \Rightarrow \\
+	\Rightarrow \quad &
+	\begin{bmatrix}
+	   	\mathbf{w} \\
+		-\lambda
+	  \end{bmatrix}
+	  =
+	  \begin{bmatrix}
+		\mathbf{\Sigma} & \mathbf{1} \\
+		\mathbf{1}^{T} & 0
+	   \end{bmatrix}^{-1}
+	  \cdot
+	  \begin{bmatrix}
+	  	0 \\ 
+		1
+	\end{bmatrix}
+\end{aligned}
+\end{equation*}
+
+
+\end{frame}
+
+
+
+\begin{frame}
+
+
+\justifying
+But the essence of using the KKT conditions to solve an optimization problem with inequality constraints is to make it combinatorial. Assume $\mathbf{b}_{\ell} \prec \mathbf{b}_{u}$ and in some reasonable finite range (e.g. $\mathbf{b}_{\ell} = \mathbf{0}$ and $\mathbf{b}_{u} = \mathbf{1}$). To solve this we need to test all combinations of activeness of inequality constraints. In above, we have $2n$ inequalities from the second KKT condition and there are $2^{2n}$ combinations of activeness. When an inequality is active, its equality holds and the corresponding Lagrange multiplier can be non-zero. Hence a new set of linear equations are created and we can solve for $\mathbf{w}$ and other Lagrange multipliers, but we need to validate the solution not violating the KKT conditions, especially that of $\mathbf{b}_{\ell} \preccurlyeq \mathbf{w} \preccurlyeq \mathbf{b}_{u}$, and check the objective function.
+
+\end{frame}
+
+
+
+
+\begin{frame}
+
+\justifying
+For example, if all inequality constraints are active, the optimization problem has its solution presented as follows:
+
+\justifying
+\begin{equation*}
+\begin{aligned}
+	& \begin{bmatrix}
+		\mathbf{\Sigma} & \mathbf{1} & \mathbf{I} & \mathbf{I} \\
+		\mathbf{1}^{T} & 0 & 0 & 0 \\
+		\mathbf{I} & 0 & 0 & 0 \\
+		\mathbf{I} & 0 & 0 & 0
+	   \end{bmatrix}
+	   \cdot
+	   \begin{bmatrix}
+	   	\mathbf{w} \\
+		-\lambda \\
+		-\boldsymbol\theta \\
+		\boldsymbol\phi
+	  \end{bmatrix}
+	  =
+	  \begin{bmatrix}
+	  	\mathbf{0} \\ 
+		1 \\
+		\mathbf{b}_{\ell} \\
+		\mathbf{b}_{u}
+	\end{bmatrix}
+	\quad \Rightarrow \\
+	\Rightarrow \quad &
+	\begin{bmatrix}
+	   	\mathbf{w} \\
+		-\lambda \\
+		-\boldsymbol\theta \\
+		\boldsymbol\phi
+	  \end{bmatrix}
+	  =
+	  \begin{bmatrix}
+		\mathbf{\Sigma} & \mathbf{1} & \mathbf{I} & \mathbf{I} \\
+		\mathbf{1}^{T} & 0 & 0 & 0 \\
+		\mathbf{I} & 0 & 0 & 0 \\
+		\mathbf{I} & 0 & 0 & 0
+	   \end{bmatrix}^{-1}
+	   \cdot
+	  \begin{bmatrix}
+	  	\mathbf{0} \\ 
+		1 \\
+		\mathbf{b}_{\ell} \\
+		\mathbf{b}_{u}
+	\end{bmatrix}
+\end{aligned}
+\end{equation*}
+
+\justifying
+and if some constraints are inactive, some of the rows and columns above shall be removed. After checking all combinations of activeness, the best solution based on the objective function are selected.
+
+\end{frame}
+
+
+
+
+
+\subsection{Minimum volatility for a given target return}
+
+\begin{frame}
+\frametitle{\textbf{Minimum volatility for a given target return}}
+
+\justifying
+Let a portfolio as initially described above. We want to obtain the optimum vector $\mathbf{w}$ that minimizes portfolio's volatility (risk) and gives annual portfolio's return $r$. To do so, we have to solve the following optimization problem:
+
+\vspace{0.2cm}
+\justifying
+\begin{equation}
+\label{eq:7}
+\begin{aligned}
+\min_{\mathbf{w}} \quad & f\left(\mathbf{w}\right) = \frac{1}{2}\mathbf{w}^{T}\mathbf{\Sigma}\mathbf{w} \\
+\textrm{s.t.} \quad & h_{1}\left(\mathbf{w}\right) = 1 - \mathbf{1}^{T} \mathbf{w} = 0 \\
+                             & h_{2}\left(\mathbf{w}\right) = r - \boldsymbol\mu^{T} \mathbf{w} = 0 \\
+                             & g_{1}\left(\mathbf{w}\right) = \mathbf{b}_{\ell} - \mathbf{w} \preccurlyeq \mathbf{0} \\
+                             & g_{2}\left(\mathbf{w}\right) = \mathbf{w} - \mathbf{b}_{u} \preccurlyeq \mathbf{0} \\
+\end{aligned}
+\end{equation}
+
+\end{frame}
+
+
+
+
+
+
+\begin{frame}
+
+\justifying
+The Lagrangian for problem \eqref{eq:7} is the following:
+
+\justifying
+\begin{equation*}
+\begin{aligned}
+	L\left(\mathbf{w},\boldsymbol\lambda,\boldsymbol\theta,\boldsymbol\phi\right) \quad = & \quad f\left(\mathbf{w}\right) + \lambda_{1} h_{1}\left(\mathbf{w}\right) + \lambda_{2} h_{2}\left(\mathbf{w}\right) + \boldsymbol\theta^{T} g_{1}\left(\mathbf{w}\right) + \boldsymbol\phi^{T} g_{2}\left(\mathbf{w}\right) = \\
+	 = & \quad \frac{1}{2}\mathbf{w}^{T}\mathbf{\Sigma}\mathbf{w} - \lambda_{1} \left(\mathbf{1}^{T} \mathbf{w} - 1\right) - \lambda_{2} \left(\boldsymbol\mu^{T} \mathbf{w} - r\right) - \\
+	 & \quad - \boldsymbol\theta^{T} \left( \mathbf{w}-\mathbf{b}_{\ell} \right) + \boldsymbol\phi^{T} \left( \mathbf{w}-\mathbf{b}_{u} \right)\\
+\end{aligned}
+\end{equation*}
+
+\vspace{0.4cm}
+\justifying
+The rest of the solution process remains as described before. Note that, now, the $\boldsymbol\lambda$ is a vector of two elements in contrast to problem \eqref{eq:6} where $\lambda$ was scalar.
+
+\vspace{0.4cm}
+\justifying
+Next, we list the corresponding KKT conditions for solving the above problem.
+
+\end{frame}
+
+
+
+\begin{frame}
+
+\justifying
+The first condition states that
+\justifying
+\begin{equation*}
+	\nabla_{\mathbf{w}} L\left(\mathbf{w},\boldsymbol\lambda,\boldsymbol\theta,\boldsymbol\phi\right) = \mathbf{\Sigma}\mathbf{w} - \lambda_{1} \mathbf{1} - \lambda_{2} \boldsymbol\mu - \boldsymbol\theta + \boldsymbol\phi = \mathbf{0}
+\end{equation*}
+\justifying
+the second condition states that
+\justifying
+\begin{equation*}
+\begin{aligned}
+	\nabla_{\lambda_{1}} L\left(\mathbf{w},\boldsymbol\lambda,\boldsymbol\theta,\boldsymbol\phi\right) = \mathbf{1}^{T}\mathbf{w} - 1 & = 0\\
+	\nabla_{\lambda_{2}} L\left(\mathbf{w},\boldsymbol\lambda,\boldsymbol\theta,\boldsymbol\phi\right) = \boldsymbol\mu^{T}\mathbf{w} - r & = 0\\
+	\mathbf{w} - \mathbf{b}_{\ell} & \succcurlyeq \mathbf{0}\\
+	\mathbf{w} - \mathbf{b}_{u} & \preccurlyeq \mathbf{0}\\
+\end{aligned}
+\end{equation*}
+\justifying
+the third condition states that
+\justifying
+\begin{equation*}
+\begin{aligned}
+	\boldsymbol\theta & \succcurlyeq \mathbf{0} \\
+	\boldsymbol\phi & \succcurlyeq \mathbf{0}\\
+\end{aligned}
+\end{equation*}
+\justifying
+and the fourth condition states that
+\justifying
+\begin{equation*}
+\begin{aligned}
+	\boldsymbol\theta \odot \left( \mathbf{w}-\mathbf{b}_{\ell} \right) & = \mathbf{0} \\
+	\boldsymbol\phi \odot \left( \mathbf{w}-\mathbf{b}_{u} \right) & = \mathbf{0} \\
+\end{aligned}
+\end{equation*}
+
+\end{frame}
+
+
+
+\begin{frame}
+
+\justifying
+Given that $\mathbf{w}, \boldsymbol\theta, \boldsymbol\phi$ are vectors of $n$ elements and $\boldsymbol\lambda$ is vector of $2$ elements, we have $3n+2$ unknowns. Also, from the four conditions we have $n+2+0+2n=3n+2$ equalities and $0+2n+2n+0=4n$ inequalities. This should sufficient to provide a solution, but note that the equations from the fourth condition are nonlinear as it includes $\boldsymbol\theta \odot \mathbf{w}$ and $\boldsymbol\phi \odot \mathbf{w}$ terms. To make it a system of linear equations, we can consider various combination of activeness of inequality constraints to simplify it. It would be tremendously easier if none of the inequality constraints are active (e.g., when $\mathbf{b}_{\ell} = -\boldsymbol\infty$ and $\mathbf{b}_{u} = \boldsymbol\infty$, which for sure $\boldsymbol\theta=\boldsymbol\phi=\mathbf{0}$ based on the complementary slackness), in this case we have:
+
+\justifying
+\begin{equation*}
+\begin{aligned}
+	& \mathbf{\Sigma}\mathbf{w} - \lambda_{1} \mathbf{1} - \lambda_{2} \boldsymbol\mu = \mathbf{0} \quad \Rightarrow \\
+	\Rightarrow \quad & \mathbf{\Sigma}\mathbf{w} = \lambda_{1} \mathbf{1} + \lambda_{2} \boldsymbol\mu \quad \Rightarrow \\
+	\Rightarrow \quad & \mathbf{w} = \lambda_{1} \mathbf{\Sigma}^{-1}\mathbf{1} + \lambda_{2} \mathbf{\Sigma}^{-1}\boldsymbol\mu \\
+\end{aligned}
+\end{equation*}
+
+
+
+\end{frame}
+
+
+
+
+\begin{frame}
+
+\justifying
+By substituting on the equality constraints we have:
+
+\justifying
+\begin{equation*}
+\begin{aligned}
+	& \mathbf{1}^{T}\mathbf{w} - 1 = 0 \quad \Rightarrow \\
+	\Rightarrow \quad & \mathbf{1}^{T} \left(\lambda_{1} \mathbf{\Sigma}^{-1}\mathbf{1} + \lambda_{2} \mathbf{\Sigma}^{-1}\boldsymbol\mu\right) - 1 = 0 \quad \Rightarrow \\
+	\Rightarrow \quad & \lambda_{1} \mathbf{1}^{T} \mathbf{\Sigma}^{-1}\mathbf{1} + \lambda_{2} \mathbf{1}^{T} \mathbf{\Sigma}^{-1}\boldsymbol\mu = 1 \quad \Rightarrow \\
+	\Rightarrow \quad & \lambda_{1} \mathbf{1}^{T} \mathbf{\Sigma}^{-1}\mathbf{1} + \lambda_{2} \boldsymbol\mu^{T} \mathbf{\Sigma}^{-1}\mathbf{1} = 1 \\
+\end{aligned}
+\end{equation*}
+
+\justifying
+\begin{equation*}
+\begin{aligned}
+	& \boldsymbol\mu^{T}\mathbf{w} - r = 0 \quad \Rightarrow \\
+	\Rightarrow \quad & \boldsymbol\mu^{T} \left(\lambda_{1} \mathbf{\Sigma}^{-1}\mathbf{1} + \lambda_{2} \mathbf{\Sigma}^{-1}\boldsymbol\mu\right) - r = 0 \quad \Rightarrow \\
+	\Rightarrow \quad & \lambda_{1} \boldsymbol\mu^{T} \mathbf{\Sigma}^{-1}\mathbf{1} + \lambda_{2} \boldsymbol\mu^{T} \mathbf{\Sigma}^{-1}\boldsymbol\mu = r \\
+\end{aligned}
+\end{equation*}
+
+\vspace{0.2cm}
+\justifying
+Therefore, we have:
+
+\justifying
+\begin{equation*}
+\begin{aligned}
+	& \begin{bmatrix}
+		\mathbf{1}^{T} \mathbf{\Sigma}^{-1}\mathbf{1} & \boldsymbol\mu^{T} \mathbf{\Sigma}^{-1}\mathbf{1} \\
+		\boldsymbol\mu^{T} \mathbf{\Sigma}^{-1}\mathbf{1} & \boldsymbol\mu^{T} \mathbf{\Sigma}^{-1}\boldsymbol\mu
+	   \end{bmatrix}
+	   \cdot
+	   \begin{bmatrix}
+		\lambda_{1}\\
+		\lambda_{2}
+	  \end{bmatrix}
+	  =
+	  \begin{bmatrix}
+		1\\
+		r
+	\end{bmatrix}
+	\quad \Rightarrow \\
+	\Rightarrow \quad &
+	\begin{bmatrix}
+		\lambda_{1}\\
+		\lambda_{2}
+	  \end{bmatrix}
+	  =
+	  \begin{bmatrix}
+		\mathbf{1}^{T} \mathbf{\Sigma}^{-1}\mathbf{1} & \boldsymbol\mu^{T} \mathbf{\Sigma}^{-1}\mathbf{1}\\
+		\boldsymbol\mu^{T} \mathbf{\Sigma}^{-1}\mathbf{1} & \boldsymbol\mu^{T} \mathbf{\Sigma}^{-1}\boldsymbol\mu
+	   \end{bmatrix}^{-1}
+	   \cdot
+	  \begin{bmatrix}
+		1\\
+		r
+	\end{bmatrix}
+\end{aligned}
+\end{equation*}
+
+\end{frame}
+
+
+
+\begin{frame}
+
+\justifying
+Finally, we substitute back to above for finding $\mathbf{w}^{*}$. But the solution under this condition must not violate the second conditions, $\mathbf{b}_{\ell} \preccurlyeq \mathbf{w}^{*} \preccurlyeq \mathbf{b}_{u}$. In fact, we can also solve for both $\mathbf{w}$ and $\boldsymbol\lambda$ together in a matrix form equation as shown below:
+
+\justifying
+\begin{equation*}
+\begin{aligned}
+	& \begin{cases}
+	\mathbf{\Sigma}\mathbf{w} - \lambda_{1} \mathbf{1} - \lambda_{2} \boldsymbol\mu = \mathbf{0} \\
+	\mathbf{1}^{T}\mathbf{w} - 1 = 0 \\
+	\boldsymbol\mu^{T}\mathbf{w} - r = 0
+	\end{cases}
+	\quad \Rightarrow \\
+	& \begin{bmatrix}
+		\mathbf{\Sigma} & \mathbf{1} & \boldsymbol\mu \\
+		\mathbf{1}^{T} & 0 & 0 \\
+		\boldsymbol\mu^{T} & 0 & 0
+	   \end{bmatrix}
+	   \cdot
+	   \begin{bmatrix}
+	   	\mathbf{w} \\
+		-\lambda_{1} \\
+		-\lambda_{2}
+	  \end{bmatrix}
+	  =
+	  \begin{bmatrix}
+	  	\mathbf{0} \\ 
+		1 \\
+		r
+	\end{bmatrix}
+	\quad \Rightarrow \\
+	\Rightarrow \quad &
+	\begin{bmatrix}
+	   	\mathbf{w} \\
+		-\lambda_{1} \\
+		-\lambda_{2}
+	  \end{bmatrix}
+	  =
+	   \begin{bmatrix}
+		\mathbf{\Sigma} & \mathbf{1} & \boldsymbol\mu \\
+		\mathbf{1}^{T} & 0 & 0 \\
+		\boldsymbol\mu^{T} & 0 & 0
+	   \end{bmatrix}^{-1}
+	  \cdot
+	  \begin{bmatrix}
+	  	\mathbf{0} \\ 
+		1 \\
+		r
+	\end{bmatrix}
+\end{aligned}
+\end{equation*}
+
+\end{frame}
+
+
+
+\begin{frame}
+
+\justifying
+As said before, the essence of using the KKT conditions to solve an optimization problem with inequality constraints is to make it combinatorial. For example, if all inequality constraints are active, the optimization problem has its solution presented as follows:
+
+\justifying
+\begin{equation*}
+\begin{aligned}
+	& \begin{bmatrix}
+		\mathbf{\Sigma} & \mathbf{1} & \boldsymbol\mu & \mathbf{I} & \mathbf{I} \\
+		\mathbf{1}^{T} & 0 & 0 & 0 & 0 \\
+		\boldsymbol\mu^{T} & 0 & 0 & 0 & 0 \\
+		\mathbf{I} & 0 & 0 & 0 & 0 \\
+		\mathbf{I} & 0 & 0 & 0 & 0
+	   \end{bmatrix}
+	   \cdot
+	   \begin{bmatrix}
+	   	\mathbf{w} \\
+		-\lambda_{1} \\
+		-\lambda_{2} \\
+		-\boldsymbol\theta \\
+		\boldsymbol\phi
+	  \end{bmatrix}
+	  =
+	  \begin{bmatrix}
+	  	\mathbf{0} \\ 
+		1 \\
+		r \\
+		\mathbf{b}_{\ell} \\
+		\mathbf{b}_{u}
+	\end{bmatrix}
+	\quad \Rightarrow \\
+	\Rightarrow \quad &
+	\begin{bmatrix}
+	   	\mathbf{w} \\
+		-\lambda_{1} \\
+		-\lambda_{2} \\
+		-\boldsymbol\theta \\
+		\boldsymbol\phi
+	  \end{bmatrix}
+	  =
+	  \begin{bmatrix}
+		\mathbf{\Sigma} & \mathbf{1} & \boldsymbol\mu & \mathbf{I} & \mathbf{I} \\
+		\mathbf{1}^{T} & 0 & 0 & 0 & 0 \\
+		\boldsymbol\mu^{T} & 0 & 0 & 0 & 0 \\
+		\mathbf{I} & 0 & 0 & 0 & 0 \\
+		\mathbf{I} & 0 & 0 & 0 & 0
+	   \end{bmatrix}^{-1}
+	   \cdot
+	  \begin{bmatrix}
+	  	\mathbf{0} \\ 
+		1 \\
+		r \\
+		\mathbf{b}_{\ell} \\
+		\mathbf{b}_{u}
+	\end{bmatrix}
+\end{aligned}
+\end{equation*}
+
+\justifying
+and if some constraints are inactive, some of the rows and columns above shall be removed. After checking all combinations of activeness, the best solution based on the objective function are selected.
+
+\end{frame}
+
+
+
+
+
+
+
+
+
+
+
+
+\subsection{Maximum quadratic utility given some risk aversion}
+
+\begin{frame}
+\frametitle{\textbf{Maximum quadratic utility given some risk aversion}}
+
+\justifying
+Let a portfolio as initially described above. We want to obtain the optimum vector $\mathbf{w}$ that maximizes quadratic utility $QU$ given some risk aversion parameter $\gamma$. Note that maximizing $QU$ is equivalent to minimizing $-QU$. To do so, we have to solve the following optimization problem:
+
+\vspace{0.2cm}
+\justifying
+\begin{equation}
+\begin{aligned}
+\label{eq:8}
+\min_{\mathbf{w}} \quad & f\left(\mathbf{w}\right) \equiv - QU \equiv -\boldsymbol\mu^{T} \mathbf{w} + \gamma \frac{1}{2} \mathbf{w}^{T}\mathbf{\Sigma}\mathbf{w} \\
+\textrm{s.t.} \quad & h\left(\mathbf{w}\right) = 1 - \mathbf{1}^{T} \mathbf{w} = 0 \\
+                             & g_{1}\left(\mathbf{w}\right) = \mathbf{b}_{\ell} - \mathbf{w} \preccurlyeq \mathbf{0} \\
+                             & g_{2}\left(\mathbf{w}\right) = \mathbf{w} - \mathbf{b}_{u} \preccurlyeq \mathbf{0} \\
+\end{aligned}
+\end{equation}
+
+\end{frame}
+
+
+
+
+
+
+\begin{frame}
+
+\justifying
+The Lagrangian for problem \eqref{eq:8} is the following:
+
+\justifying
+\begin{equation*}
+\begin{aligned}
+	L\left(\mathbf{w},\lambda,\boldsymbol\theta,\boldsymbol\phi\right) \quad = & \quad f\left(\mathbf{w}\right) + \lambda h\left(\mathbf{w}\right) + \boldsymbol\theta^{T} g_{1}\left(\mathbf{w}\right) + \boldsymbol\phi^{T} g_{2}\left(\mathbf{w}\right) \quad = \\
+	 = & \quad -\boldsymbol\mu^{T} \mathbf{w} + \gamma \frac{1}{2}\mathbf{w}^{T}\mathbf{\Sigma}\mathbf{w} - \lambda \left(\mathbf{1}^{T} \mathbf{w} - 1\right) - \\
+	& \quad - \boldsymbol\theta^{T} \left( \mathbf{w}-\mathbf{b}_{\ell} \right) + \boldsymbol\phi^{T} \left( \mathbf{w}-\mathbf{b}_{u} \right)\\
+\end{aligned}
+\end{equation*}
+
+\vspace{0.4cm}
+\justifying
+The rest of the solution process remains as described before. Note that, now, the $\boldsymbol\lambda$ is a vector of two elements in contrast to problem \eqref{eq:6} where $\lambda$ was scalar.
+
+\vspace{0.4cm}
+\justifying
+Next, we list the corresponding KKT conditions for solving the above problem.
+
+\end{frame}
+
+
+
+\begin{frame}
+
+\justifying
+The first condition states that
+
+\justifying
+\begin{equation*}
+	\nabla_{\mathbf{w}} L\left(\mathbf{w},\lambda,\boldsymbol\theta,\boldsymbol\phi\right) = -\boldsymbol\mu + \gamma\mathbf{\Sigma}\mathbf{w} - \lambda \mathbf{1} - \boldsymbol\theta + \boldsymbol\phi = \mathbf{0}
+\end{equation*}
+
+\vspace{0.2cm}
+\justifying
+the second condition states that
+
+\justifying
+\begin{equation*}
+\begin{aligned}
+	\nabla_{\lambda} L\left(\mathbf{w},\lambda,\boldsymbol\theta,\boldsymbol\phi\right) = \mathbf{1}^{T}\mathbf{w} - 1 & = 0\\
+	\mathbf{w} - \mathbf{b}_{\ell} & \succcurlyeq \mathbf{0}\\
+	\mathbf{w} - \mathbf{b}_{u} & \preccurlyeq \mathbf{0}\\
+\end{aligned}
+\end{equation*}
+
+\justifying
+the third condition states that
+
+\justifying
+\begin{equation*}
+\begin{aligned}
+	\boldsymbol\theta & \succcurlyeq \mathbf{0} \\
+	\boldsymbol\phi & \succcurlyeq \mathbf{0}\\
+\end{aligned}
+\end{equation*}
+
+\vspace{0.2cm}
+\justifying
+and the fourth condition states that
+
+\justifying
+\begin{equation*}
+\begin{aligned}
+	\boldsymbol\theta \odot \left( \mathbf{w}-\mathbf{b}_{\ell} \right) & = \mathbf{0} \\
+	\boldsymbol\phi \odot \left( \mathbf{w}-\mathbf{b}_{u} \right) & = \mathbf{0} \\
+\end{aligned}
+\end{equation*}
+
+\end{frame}
+
+
+
+\begin{frame}
+
+\justifying
+Given that $\mathbf{w}, \boldsymbol\theta, \boldsymbol\phi$ are vectors of $n$ elements and $\lambda$ is scalar, we have $3n+1$ unknowns. Also, from the four conditions we have $n+1+0+2n=3n+1$ equalities and $0+2n+2n+0=4n$ inequalities. This should sufficient to provide a solution, but note that the equations from the fourth condition are nonlinear as it includes $\boldsymbol\theta \odot \mathbf{w}$ and $\boldsymbol\phi \odot \mathbf{w}$ terms. To make it a system of linear equations, we can consider various combination of activeness of inequality constraints to simplify it. It would be tremendously easier if none of the inequality constraints are active (e.g., when $\mathbf{b}_{\ell} = -\boldsymbol\infty$ and $\mathbf{b}_{u} = \boldsymbol\infty$, which for sure $\boldsymbol\theta=\boldsymbol\phi=\mathbf{0}$ based on the complementary slackness), in this case we have:
+
+\justifying
+\begin{equation*}
+\begin{aligned}
+	& -\boldsymbol\mu + \gamma\mathbf{\Sigma}\mathbf{w} - \lambda \mathbf{1} = \mathbf{0} \quad \Rightarrow \\
+	\Rightarrow \quad & \gamma\mathbf{\Sigma}\mathbf{w} = \boldsymbol\mu + \lambda \mathbf{1} \quad \Rightarrow \\
+	\Rightarrow \quad & \mathbf{\Sigma}\mathbf{w} = \frac{1}{\gamma} \left(\boldsymbol\mu + \lambda \mathbf{1}\right) \\
+	\Rightarrow \quad & \mathbf{w} = \frac{1}{\gamma} \mathbf{\Sigma}^{-1} \left(\boldsymbol\mu + \lambda \mathbf{1}\right) \\
+\end{aligned}
+\end{equation*}
+
+
+
+\end{frame}
+
+
+
+
+\begin{frame}
+
+\justifying
+By substituting on the equality constraint we have:
+
+\justifying
+\begin{equation*}
+\begin{aligned}
+	& \mathbf{1}^{T}\mathbf{w} - 1 = 0 \quad \Rightarrow \\
+	\Rightarrow \quad & \mathbf{1}^{T} \left(\frac{1}{\gamma} \mathbf{\Sigma}^{-1} \left(\boldsymbol\mu + \lambda \mathbf{1}\right)\right) - 1 = 0 \quad \Rightarrow \\
+	\Rightarrow \quad & \frac{1}{\gamma}\mathbf{1}^{T}\mathbf{\Sigma}^{-1}\boldsymbol\mu + \lambda \frac{1}{\gamma} \mathbf{1}^{T} \mathbf{\Sigma}^{-1}\mathbf{1} - 1 = 0 \quad \Rightarrow \\
+	\Rightarrow \quad & \lambda \frac{1}{\gamma} \mathbf{1}^{T} \mathbf{\Sigma}^{-1}\mathbf{1} = 1 -  \frac{1}{\gamma}\mathbf{1}^{T}\mathbf{\Sigma}^{-1}\boldsymbol\mu \quad \Rightarrow \\
+	\Rightarrow \quad & \lambda \mathbf{1}^{T} \mathbf{\Sigma}^{-1}\mathbf{1} = \gamma - \mathbf{1}^{T}\mathbf{\Sigma}^{-1}\boldsymbol\mu \quad \Rightarrow \\
+	\Rightarrow \quad & \lambda = \frac{\gamma - \mathbf{1}^{T}\mathbf{\Sigma}^{-1}\boldsymbol\mu}{\mathbf{1}^{T} \mathbf{\Sigma}^{-1}\mathbf{1}} \quad \Rightarrow \\
+\end{aligned}
+\end{equation*}
+
+\vspace{0.2cm}
+\justifying
+Finally, by substituting back we have:
+
+\justifying
+\begin{equation*}
+\begin{aligned}
+	\mathbf{w} = \frac{1}{\gamma} \mathbf{\Sigma}^{-1} \left(\boldsymbol\mu + \frac{\gamma - \mathbf{1}^{T}\mathbf{\Sigma}^{-1}\boldsymbol\mu}{\mathbf{1}^{T} \mathbf{\Sigma}^{-1}\mathbf{1}} \mathbf{1}\right)
+\end{aligned}
+\end{equation*}
+
+\end{frame}
+
+
+
+
+
+\begin{frame}
+
+\justifying
+But the solution under this condition must not violate the second conditions, $\mathbf{b}_{\ell} \preccurlyeq \mathbf{w}^{*} \preccurlyeq \mathbf{b}_{u}$. In fact, we can also solve for both $\mathbf{w}$ and $\boldsymbol\lambda$ together in a matrix form equation as shown below:
+
+\justifying
+\begin{equation*}
+\begin{aligned}
+	& \begin{cases}
+	-\boldsymbol\mu + \gamma\mathbf{\Sigma}\mathbf{w} - \lambda \mathbf{1} = \mathbf{0}  \\
+	\mathbf{1}^{T}\mathbf{w} - 1 = 0
+	\end{cases}
+	\quad \Rightarrow \\
+	& \begin{bmatrix}
+		\gamma\mathbf{\Sigma} & \mathbf{1} \\
+		\mathbf{1}^{T} & 0
+	   \end{bmatrix}
+	   \cdot
+	   \begin{bmatrix}
+	   	\mathbf{w} \\
+		-\lambda
+	  \end{bmatrix}
+	  =
+	  \begin{bmatrix}
+	  	\boldsymbol\mu \\ 
+		1
+	\end{bmatrix}
+	\quad \Rightarrow \\
+	\Rightarrow \quad &
+	\begin{bmatrix}
+	   	\mathbf{w} \\
+		-\lambda
+	  \end{bmatrix}
+	  =
+	  \begin{bmatrix}
+		\gamma\mathbf{\Sigma} & \mathbf{1} \\
+		\mathbf{1}^{T} & 0
+	   \end{bmatrix}^{-1}
+	  \cdot
+	  \begin{bmatrix}
+	  	\boldsymbol\mu \\ 
+		1
+	\end{bmatrix}
+\end{aligned}
+\end{equation*}
+
+
+\end{frame}
+
+
+
+
+\begin{frame}
+
+\justifying
+As said before, the essence of using the KKT conditions to solve an optimization problem with inequality constraints is to make it combinatorial. For example, if all inequality constraints are active, the optimization problem has its solution presented as follows:
+
+\justifying
+\begin{equation*}
+\begin{aligned}
+	& \begin{bmatrix}
+		\gamma\mathbf{\Sigma} & \mathbf{1} & \mathbf{I} & \mathbf{I} \\
+		\mathbf{1}^{T} & 0 & 0 & 0 \\
+		\mathbf{I} & 0 & 0 & 0 \\
+		\mathbf{I} & 0 & 0 & 0
+	   \end{bmatrix}
+	   \cdot
+	   \begin{bmatrix}
+	   	\mathbf{w} \\
+		-\lambda \\
+		-\boldsymbol\theta \\
+		\boldsymbol\phi
+	  \end{bmatrix}
+	  =
+	  \begin{bmatrix}
+	  	\boldsymbol\mu \\ 
+		1 \\
+		\mathbf{b}_{\ell} \\
+		\mathbf{b}_{u}
+	\end{bmatrix}
+	\quad \Rightarrow \\
+	\Rightarrow \quad &
+	\begin{bmatrix}
+	   	\mathbf{w} \\
+		-\lambda \\
+		-\boldsymbol\theta \\
+		\boldsymbol\phi
+	  \end{bmatrix}
+	  =
+	  \begin{bmatrix}
+		\gamma\mathbf{\Sigma} & \mathbf{1} & \mathbf{I} & \mathbf{I} \\
+		\mathbf{1}^{T} & 0 & 0 & 0 \\
+		\mathbf{I} & 0 & 0 & 0 \\
+		\mathbf{I} & 0 & 0 & 0
+	   \end{bmatrix}^{-1}
+	   \cdot
+	  \begin{bmatrix}
+	  	\boldsymbol\mu \\ 
+		1 \\
+		\mathbf{b}_{\ell} \\
+		\mathbf{b}_{u}
+	\end{bmatrix}
+\end{aligned}
+\end{equation*}
+
+\justifying
+and if some constraints are inactive, some of the rows and columns above shall be removed. After checking all combinations of activeness, the best solution based on the objective function are selected.
+
+\end{frame}
+
+
+
+\end{document}
+
+

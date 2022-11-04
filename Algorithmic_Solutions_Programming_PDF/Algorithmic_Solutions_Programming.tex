@@ -1,0 +1,1380 @@
+\documentclass{beamer}
+\usetheme{Boadilla}
+\setbeamertemplate{caption}[numbered]
+\usepackage{ragged2e}
+\usepackage{xcolor}
+\usepackage{mathtools}
+\usepackage{algorithm2e}
+
+
+\makeatletter
+\setbeamertemplate{footline}
+{
+  \leavevmode
+  \hbox{
+  \begin{beamercolorbox}[wd=.8\paperwidth,ht=2.25ex,dp=1ex,center]{title in head/foot}
+    \usebeamerfont{title in head/foot}\insertshorttitle
+  \end{beamercolorbox}%
+  \begin{beamercolorbox}[wd=.2\paperwidth,ht=2.25ex,dp=1ex,center]{date in head/foot}
+    \insertframenumber{} / \inserttotalframenumber
+  \end{beamercolorbox}}%
+  \vskip0pt%
+}
+\makeatother
+
+
+
+\title{\textbf{Portfolio Optimization}}
+\subtitle{An Application of Convex Optimization}
+\author{A project as part of the course:\\"Advanced Topics in Convex Optimization"\\\vspace{0.4cm}Supplementary Document\\\textbf{Algorithmic Solutions - Programming}\\\vspace{0.4cm}}
+\institute{Paraskakis Nikolaos, Undergraduate Student\\\vspace{0.4cm}School of Electrical \& Computer Engineering\\Technical University of Crete}
+\date{\footnotesize \today}
+
+
+
+
+
+
+
+
+\AtBeginSection[]
+{
+  \begin{frame}{Plan} 
+    \frametitle{Contents}
+    \tableofcontents[sectionstyle=show/hide,subsectionstyle=show/show/hide]
+  \end{frame}
+}
+
+
+
+
+
+\begin{document}
+
+
+\begin{frame}
+\titlepage
+\end{frame}
+
+
+
+\section{Algorithmic Solutions - Programming}
+
+
+
+
+
+\subsection{Projected (Sub)Gradient Method}
+
+\begin{frame}
+\frametitle{\textbf{Projected (Sub)Gradient Method}}
+
+\justifying
+Consider the optimization model
+\begin{equation}
+	\label{eq:9}
+	\min{\left\{f(\mathbf{w}) : \mathbf{w} \in C \right\}}
+\end{equation}
+
+\vspace{0.2cm}
+\justifying
+Suppose that the below assumptions hold:
+\begin{itemize}
+	\item $f : \mathbb{E} \rightarrow (-\infty,\infty]$ is proper closed convex
+	\item $C \subseteq \mathbb{E}$ is nonempty, closed, convex and compact
+	\item $C \subseteq \text{int}(\text{dom}(f))$
+	\item The optimal set of \eqref{eq:9} is nonempty and denoted by $W^{*}$. The optimal value of the problem is denoted by $f_{opt}$.
+\end{itemize}
+
+\vspace{0.2cm}
+\justifying
+The above imply the validity of the additional assumption that there exists a constant $L_f > 0$ for which $\|\mathbf{g}\|_2 \leq L_{f}$ for all $\mathbf{g} \in \partial{f(\mathbf{w})}, \mathbf{w} \in C$. That $L_f$ is a Lipschitz constant of $f$ over $C$.\\
+
+\end{frame}
+
+
+
+\begin{frame}
+
+\justifying
+The general form of the algorithm is the following:\\
+
+\vspace{0.4cm}
+\justifying
+	\begin{algorithm}[H]
+			\caption{Projected subgradient method (General form)}\label{alg:1}
+			$\mathbf{w}_0 \in \mathbb{R}^{n}, k = 0$\\
+			\While{$(1)$}
+			{
+				Choose step-size $t_{k} > 0$\\
+				Compute $f'(\mathbf{w}_{k}) \in \partial{f(\mathbf{w}_{k})}$\\
+				$\mathbf{w}_{k+1} = P_{C}(\mathbf{w}_{k} - t_{k} f'(\mathbf{w}_{k}))$\\
+				$k = k + 1$\\
+				\If{$(convergence)$}
+				{
+					quit
+				}
+			}
+		\end{algorithm}
+
+\end{frame}
+
+
+
+
+\begin{frame}
+
+\justifying
+Now, we choose one from below as the step-size rule:  
+
+\vspace{0.2cm}
+\justifying
+Polyak step-size:
+\begin{equation*}
+\begin{aligned}
+t_{k} & =
+	\begin{cases}
+		\frac{f(\mathbf{w}_{k})-f_{opt}}{\|f'(\mathbf{w}_{k})\|^{2}} & \text{, } f'(\mathbf{w}_{k}) \neq \mathbf{0} \\
+		1 & \text{, } f'(\mathbf{w}_{k}) = \mathbf{0}
+	\end{cases}
+\end{aligned}
+\end{equation*}
+
+\vspace{0.2cm}
+\justifying
+Dynamic step-size:
+\begin{equation*}
+\begin{aligned}
+t_{k} & =
+	\begin{cases}
+		\frac{1}{\|f'(\mathbf{x}_{k})\| \sqrt{k+1}} & \text{, } f'(\mathbf{w}_{k}) \neq \mathbf{0} \\
+		\frac{1}{L_f} & \text{, } f'(\mathbf{w}_{k}) = \mathbf{0}
+	\end{cases}
+\end{aligned}
+\end{equation*}
+
+\vspace{0.2cm}
+\justifying
+As far as the subgradient is concerned, it is important to note that all the problems that we refer in this presentation have differentiable objective functions, so the term subgradient is abusive and in essence we are looking for objective function's gradient. So, we are using projected gradient method.
+
+
+\end{frame}
+
+
+
+
+\begin{frame}
+
+\justifying
+\textbf{Minimum volatility}
+\begin{itemize}
+	\item $f\left(\mathbf{w}\right) = \frac{1}{2}\mathbf{w}^{T}\mathbf{\Sigma}\mathbf{w}$
+	\item $f'\left(\mathbf{w}\right) = \nabla f\left(\mathbf{w}\right) = \mathbf{\Sigma}\mathbf{w}$
+	\item $L_{f} = \rho\left(\mathbf{\Sigma}\right)$
+	\item $C = \{\mathbf{w} \in \mathbb{R}^{n} : \mathbf{0} \leq \mathbf{w} \leq \mathbf{1}, \mathbf{1}^{T}\mathbf{w} = 1\}$
+\end{itemize}
+
+\vspace{0.2cm}
+\justifying
+\textbf{Minimum volatility for a given target return}
+\begin{itemize}
+	\item $f\left(\mathbf{w}\right) = \frac{1}{2}\mathbf{w}^{T}\mathbf{\Sigma}\mathbf{w}$
+	\item $f'\left(\mathbf{w}\right) = \nabla f\left(\mathbf{w}\right) = \mathbf{\Sigma}\mathbf{w}$
+	\item $L_{f} = \rho\left(\mathbf{\Sigma}\right)$
+	\item $C = \{\mathbf{w} \in \mathbb{R}^{n} : \mathbf{0} \leq \mathbf{w} \leq \mathbf{1}, \mathbf{1}^{T}\mathbf{w} = 1,\boldsymbol\mu^{T}\mathbf{w} = r\}$
+\end{itemize}
+
+\vspace{0.2cm}
+\justifying
+\textbf{Maximum quadratic utility given some risk aversion}
+\begin{itemize}
+	\item $f\left(\mathbf{w}\right) = -\boldsymbol\mu^{T}\mathbf{w} + \gamma\frac{1}{2}\mathbf{w}^{T}\mathbf{\Sigma}\mathbf{w}$
+	\item $f'\left(\mathbf{w}\right) = \nabla f\left(\mathbf{w}\right) = -\boldsymbol\mu + \gamma\mathbf{\Sigma}\mathbf{w}$
+	\item $L_{f} = \rho\left(\mathbf{\Sigma}\right)$
+	\item $C = \{\mathbf{w} \in \mathbb{R}^{n} : \mathbf{0} \leq \mathbf{w} \leq \mathbf{1}, \mathbf{1}^{T}\mathbf{w} = 1\}$
+\end{itemize}
+
+
+\end{frame}
+
+
+
+
+
+
+
+\begin{frame}
+
+\justifying
+Note that $\rho\left(\mathbf{\Sigma}\right)$ is the spectral radius of a square matrix $\mathbf{\Sigma}$ and is equal to the maximum of the absolute values of its eigenvalues.
+
+\vspace{0.6cm}
+\justifying
+As far as the step-size is concerned, we will experiment with the dynamic step-size rule, because it does not need the knowledge of the optimal value and is more applicable in real life.
+
+\vspace{0.6cm}
+\justifying
+For convergence we check whether $f\left(\mathbf{w}_{k}\right) \leq c \cdot f_{opt}$. Parameter $c$ takes values near $1$, such $1.001$ or smaller. This condition can be used, given that we have prior solved problem via CVX, so we have obtained $f_{opt}$. In another case, we can use for convergence checking the condition $\|\frac{\mathbf{w}_{k} - \mathbf{w}_{k+1}}{\mathbf{w}_{k}}\|_{2} \approx 0$.
+
+\vspace{0.6cm}
+\justifying
+The projection onto set $C$, namely $P_{C}\left(\mathbf{w}\right)$, is being calculated using the FDPG method and it will be explained at a next section.
+
+\end{frame}
+
+
+
+
+
+\subsection{Interior Point Method}
+
+\begin{frame}
+\frametitle{\textbf{Interior Point Method}}
+
+
+\justifying
+Let the following optimization problem:
+\begin{equation}
+\begin{aligned}
+\label{eq:10}
+\min_{\mathbf{w}} \quad & f_{0}\left(\mathbf{w}\right)\\
+\textrm{s.t.} \quad & f_{i}\left(\mathbf{w}\right) \leq 0, i = 1,2,\dots,m \\
+                             & \mathbf{A}\mathbf{w} = \mathbf{b} \\
+\end{aligned}
+\end{equation}
+where we assume the following:
+
+\justifying
+\begin{itemize}
+	\item $f_{i} : \textbf{dom} f_{i} \subseteq \mathbb{R}^{n} \rightarrow \mathbb{R}, i = 1,2,\dots,m$ are convex and twice differentiable functions
+	\item $\mathbf{A} \in \mathbb{R}^{p \times n}$, $rank(\mathbf{A}) = p$ and $\mathbf{b} \in \mathbb{R}^{p}$
+\end{itemize}
+
+\vspace{0.2cm}
+\justifying
+Problem \eqref{eq:10} is defined over set $\mathbb{D} \coloneqq \cap_{i = 1}^{m} \textbf{dom} f_{i}$ and the feasible set is defined as follows:
+$$\mathbb{W} \coloneqq \{\mathbf{w} \in \mathbb{D} \textrm{ } | \textrm{ } f_{i}\left(\mathbf{w}\right) \leq 0, i =1,2,\dots,m, \textrm{ } \mathbf{A}\mathbf{w} = \mathbf{b}\}$$
+
+
+\end{frame}
+
+
+
+
+\begin{frame}
+
+
+\justifying
+Interior point methods solve problem \eqref{eq:10} by solving a sequence of problems with affine equality constraints. These problems are approximations of problem \eqref{eq:10} and their solutions are strictly feasible for problem \eqref{eq:10}. Problem \eqref{eq:10} can be expressed also as follows:
+
+\justifying
+\begin{equation}
+\begin{aligned}
+\label{eq:11}
+\min_{\mathbf{w}} \quad & {f_{0}\left(\mathbf{w}\right) + \sum_{i = 1}^{m} I{\_}\left(f_{i}\left(\mathbf{w}\right)\right)}\\
+\textrm{s.t.} \quad & \mathbf{A}\mathbf{w} = \mathbf{b} \\
+\end{aligned}
+\end{equation}
+
+\vspace{0.2cm}
+\justifying
+where
+$$
+I{\_}\left(u\right) \coloneqq
+\left\{
+	\begin{array}{ll}
+		0  & , \textrm{ } u \leq 0 \\
+		\infty & , \textrm{ } u > 0
+	\end{array}
+\right.
+$$
+
+\vspace{0.4cm}
+\justifying
+Cost function of problem \eqref{eq:11} is in general not differentiable. Consequantly, we cannot use gradient descent method or Newton method to solve it.
+
+\end{frame}
+
+
+
+
+
+
+\begin{frame}
+
+\justifying
+An approximation of function $I{\_}\left(u\right)$ is $\hat{I}{\_}\left(u\right)$, which is defined as follows:
+$$
+\hat{I}{\_}\left(u\right) \coloneqq -\frac{1}{t} \log\left(-u\right)
+$$
+with $\textbf{dom} \hat{I}{\_} = - \mathbb{R}_{++}$ and $t > 0$.
+
+\vspace{0.4cm}
+\justifying
+Function $\hat{I}{\_}$ is closed and convex and it is extremely useful.
+
+\vspace{0.4cm}
+\justifying
+The value of parameter $t$ defines the quality of the approximation.
+
+\vspace{0.4cm}
+\justifying
+We define the \textbf{logarithmic barrier function} for problem \eqref{eq:10} as follows:
+$$
+\phi\left(\mathbf{w}\right) \coloneqq - \sum_{i = 1}^{m} \log\left(-f_{i}\left(\mathbf{w}\right)\right)
+$$
+with $\textbf{dom}\phi = \{\mathbf{x} \in \cap_{i=1}^{m} \textbf{dom} f_{i} \textrm{ } | \textrm{ } f_{i}\left(\mathbf{w}\right) < 0, i=1,2,\dots,m\}$.
+
+\vspace{0.4cm}
+\justifying
+Function $\phi$ is convex and twice differentiable.
+
+\end{frame}
+
+
+
+
+
+\begin{frame}
+
+\justifying
+Next, we define the following problem:
+
+\justifying
+\begin{equation}
+\begin{aligned}
+\label{eq:12}
+\min_{\mathbf{w}} \quad & {f_{0}\left(\mathbf{w}\right) + \frac{1}{t} \phi\left(\mathbf{w}\right)} \\
+\textrm{s.t.} \quad & \mathbf{A}\mathbf{w} = \mathbf{b} \\
+\end{aligned}
+\end{equation}
+
+\justifying
+with $\mathbf{w} \in \textbf{dom}f_{0} \cap \textbf{dom}\phi \subset \mathbb{W}$.
+
+\vspace{0.4cm}
+\justifying
+Problem \eqref{eq:12} is convex and Newton algorithm for affine equality constrained problems can be used. We can, also, use the projected gradient algorithm, but now we will focus on the Newton algorithm.
+
+\vspace{0.4cm}
+\justifying
+Problem \eqref{eq:12} or the following equivalent problem:
+
+\justifying
+\begin{equation}
+\begin{aligned}
+\label{eq:13}
+\min_{\mathbf{w}} \quad & {f_{t}\left(\mathbf{w}\right) \equiv t f_{0}\left(\mathbf{w}\right) + \phi\left(\mathbf{w}\right)} \\
+\textrm{s.t.} \quad & \mathbf{A}\mathbf{w} = \mathbf{b} \\
+\end{aligned}
+\end{equation}
+
+\justifying
+are approximations of problem \eqref{eq:10}, with the approximation getting better as parameter $t$ is increasing.
+
+\end{frame}
+
+
+
+
+\begin{frame}
+
+\justifying
+The addition of term $\frac{1}{t} \phi \left(\mathbf{w}\right)$ at the cost function $f_{0} \left(\mathbf{w}\right)$, intuitively, raises a barrier at the boundary of the feasible set $\mathbb{W}$. In that way, the solution of problem \eqref{eq:13} is getting trapped in the interior of set $\mathbb{W}$, but allowing to get very close to its boundary for large values of paramter $t$.
+
+\vspace{0.4cm}
+\justifying
+The first and the second derivative of function $\phi \left(\mathbf{w}\right)$, where $\phi$ is the logarithmic barrier function, are given by:
+$$
+\nabla \phi \left( \mathbf{w} \right) = \sum_{i=1}^{m} \frac{1}{-f_{i}\left(\mathbf{w}\right)} \nabla f_{i} \left(\mathbf{w}\right)
+$$
+$$
+\nabla^{2} \phi \left( \mathbf{w} \right) = \sum_{i=1}^{m} \frac{1}{f_{i}^{2}\left(\mathbf{w}\right)} \nabla f_{i} \left(\mathbf{w}\right) {\nabla f_{i} \left(\mathbf{w}\right)}^{T} + \sum_{i=1}^{m} \frac{1}{- f_{i}\left(\mathbf{w}\right)} \nabla^{2} f_{i} \left(\mathbf{w}\right)
+$$
+
+\vspace{0.4cm}
+\justifying
+By the form of $\nabla^{2} \phi \left( \mathbf{w} \right)$ and the fact that $f_{i} \left(\mathbf{w} \right) < 0, i=1,2,\dots,m$ for $\mathbf{w} \in \textbf{dom}\phi$, we can see easilly that $\phi\left(\mathbf{w}\right)$ is a convex function (the Hessian is non-negative definite).
+
+\end{frame}
+
+
+
+
+
+
+\begin{frame}
+
+\justifying
+Let $\mathbf{w}_{*}$ the solution of problem \eqref{eq:10} and the optimal value $p_{*} \coloneqq f_{0}\left(\mathbf{w}_{*}\right)$.
+
+\vspace{0.4cm}
+\justifying
+Let $\mathbf{w}_{*}\left(t\right)$ the solution of problem \eqref{eq:13} for given value of parameter $t$.
+
+\vspace{0.4cm}
+\justifying
+It holds that $\mathbf{w}_{*}\left(t\right) - p_{*} \leq \frac{m}{t}$. It means that:
+\begin{itemize}
+	\item For given value of parameter $t$, point $\mathbf{w}_{*}\left(t\right)$ is at most $\frac{m}{t}$-suboptimal for problem \eqref{eq:10}.
+	\item For $t \rightarrow \infty$, $\mathbf{w}_{*}\left(t\right)$ converges to the optimal point of problem \eqref{eq:10}.
+\end{itemize}
+
+\vspace{0.4cm}
+\justifying
+An approximation for solving problem \eqref{eq:10}, with tolerance $\epsilon$, is the solution of the following problem:
+
+\justifying
+\begin{equation}
+\begin{aligned}
+\label{eq:14}
+\min_{\mathbf{w}} \quad & {\frac{m}{\epsilon} f_{0}\left(\mathbf{w}\right) + \phi\left(\mathbf{w}\right)} \\
+\textrm{s.t.} \quad & \mathbf{A}\mathbf{w} = \mathbf{b} \\
+\end{aligned}
+\end{equation}
+
+\vspace{0.4cm}
+\justifying
+Generally, problem \eqref{eq:14} is difficult to solve for small value of $\epsilon$. Usually, we use the interior point barrier method, which we explain below.
+
+\end{frame}
+
+
+
+
+
+\begin{frame}
+
+\justifying
+An efficient approach for the solution of problem \eqref{eq:14} is the solution of a sequence of problems of form \eqref{eq:13} with increasing $t$. The solution of such a problem for a specific $t$ consists the initial point for the next problem (with greater $t$).
+
+\vspace{0.4cm}
+\justifying
+This algorithm is as shown below and its initial point has to be feasible.
+
+\justifying
+\begin{algorithm}[H]
+			\caption{The Interior Point Barrier Method}\label{alg:2}
+			$\mathbf{w} = \mathbf{w}_{0} \in \textbf{dom}f_{0} \cap \textbf{dom}\phi \text{ with } \mathbf{A}\mathbf{w}_{0} = \mathbf{b}$\\
+			$t > 0, \mu > 1, \text{tolerance } \epsilon > 0, k = 0$\\
+			\While{$(1)$}
+			{
+				Compute $\mathbf{w}_{*}\left(t\right)$ by minimizing $t f_{0} + \phi$ s.t. $\mathbf{A}\mathbf{w} = \mathbf{b}$, starting at $\mathbf{w}$\\
+				$\mathbf{w} \coloneqq \mathbf{w}_{*}\left(t\right)$\\
+				$k = k+1$\\
+				\If{$\left(\frac{m}{t} < \epsilon\right)$}
+				{
+					quit
+				}
+				$t = \mu t$\\
+			}
+\end{algorithm}
+
+\end{frame}
+
+
+\begin{frame}
+
+\textbf{Choice of $\mu$}
+
+\vspace{0.4cm}
+\justifying
+The choice of the parameter $\mu$ involves a trade-off in the number of inner and outer iterations required. If $\mu$ is small (i.e. near $1$) then at each outer iteration $t$ increases by a small factor. As a result the initial point for the Newton process, i.e. the previous iterate $\mathbf{w}$, is a very good starting point, and the number of Newton steps needed to compute the next iterate is small. Thus, for small $\mu$ we expect a small number of Newton steps per outer iteration, but of course a large number of outer iterations since each outer iteration reduces the gap by only a small amount. In this case, the iterates (and indeed, the iterates of the inner iterations as well) closely follow the central path. This explains the alternate name path-following method.
+
+\end{frame}
+
+
+\begin{frame}
+
+\justifying
+On the other hand, if $\mu$ is large, we have the opposite situation. After each outer iteration $t$ increases a large amount, so the current iterate is probably not a very good approximation of the next iterate. Thus, we expect many more inner iterations. This aggressive updating of $t$ results in fewer outer iterations, since the duality gap is reduced by the large factor $\mu$ at each outer iteration, but more inner iterations. With $\mu$ large, the iterates are widely separated on the central path; the inner iterates veer way off the central path.
+
+\vspace{0.4cm}
+\justifying
+This trade-off in the choice of $\mu$ is confirmed both in practice and in theory. In practice, small values of $\mu$ (i.e. near $1$) result in many outer iterations, with just a few Newton steps for each outer iteration. For $\mu$ in a fairly large range, from around $3$ to $100$ or so, the two effects nearly cancel, so the total number of Newton steps remains approximately constant. This means that the choice of is not particularly critical; values from around $10$ to $20$ or so seem to work well. When the parameter $\mu$ is chosen to give the best worst-case bound on the total number of Newton steps required, values of $\mu$ near $1$ are used.
+
+\end{frame}
+
+
+
+\begin{frame}
+
+\textbf{Choice of $t_{0}$}
+
+\vspace{0.4cm}
+\justifying
+Another important issue is the choice of initial value of $t$. Here the trade-off is simple. If $t_{0}$ is chosen too large, the first outer iteration will require too many iterations. If $t_{0}$ is chosen too small, the algorithm will require extra outer iterations, and possibly too many inner iterations in the first centering step. Since $\frac{m}{t_{0}}$ is the duality gap that will result from the first centering step, one reasonable choice is to choose $t_{0}$ so that $\frac{m}{t_{0}}$ is approximately of the same order as $f_{0}\left(\mathbf{w}\left(0\right)\right) - p_{*}$, or $\mu$ times this amount. For example, if a dual feasible point $\lambda, v$ is known, with duality gap $ \eta = f_{0}\left(\mathbf{w}\left(0\right)\right) - g\left(\lambda,v\right)$, then we can take $t_{0} = \frac{m}{\eta}$. Thus, in the first outer iteration we simply compute a pair with the same duality gap as the initial primal and dual feasible points.
+
+
+
+\end{frame}
+
+
+
+
+
+
+\begin{frame}
+
+
+\justifying
+Now, we will see how to approach problems of form \eqref{eq:13}. It is a convex minimization problem with affine equality constraints and twice differentiable cost function. To solve that, we can use projected gradient method, as well as Newton method starting from feasible point. Here, we will focus on Newton method.
+
+\vspace{0.8cm}
+\justifying
+The choice between the two algorithms is not so critical but there are some thing we must observe. Practical difference is that Newton method assumes you have much more information available, makes much better updates, and thus converges in less iterations.
+
+\end{frame}
+
+
+
+\begin{frame}
+
+\justifying
+But number of iterations needed is not all you want to know. The update of Newton method scales poorly with problem size. If $\mathbf{w} \in \mathbb{R}^{d}$, then to compute $[\nabla^{2} f_{t}\left(\mathbf{w}\right)]^{-1}$ you need $\mathcal{O}\left(d^{3}\right)$ operations. On the other hand, cost of update for gradient descent is linear in $d$.
+
+\vspace{0.8cm}
+\justifying
+In many large-scale applications, very often arising in machine learning for example, $d$ is so large (can be a billion) that you are way beyond being able to make even a single Newton update. But in our case, we do portfolio optimization, where the number of assets is in general small, so the use of Newton method is a good choice. The analytic steps of this algorithm are shown below.
+
+\end{frame}
+
+
+
+\begin{frame}
+
+\frametitle{\textbf{Newton Method}}
+
+\scriptsize
+\justifying
+\begin{algorithm}[H]
+			\caption{The Newton Method}\label{alg:3}
+			$\mathbf{w} = \mathbf{w}_{0} \in \textbf{dom}f_{0} \cap \textbf{dom}\phi \text{ with } \mathbf{A}\mathbf{w}_{0} = \mathbf{b}$\\
+			Backtracking parameters $\alpha \in \left(0, 0.5\right)$ and $\beta \in \left(0, 1\right)$\\
+			$t > 0, \text{tolerance } \epsilon > 0, k = 0$\\
+			\While{$(1)$}
+			{
+				$\begin{bmatrix}
+					\Delta \mathbf{w}_{k}\\
+					\mathbf{s}_{k}
+				\end{bmatrix} = 
+				\begin{bmatrix}
+					\nabla^{2} f_{t}\left(\mathbf{w}_{k}\right) & \mathbf{A}^{T}\\
+					\mathbf{A} & \mathbf{0}
+				\end{bmatrix} \cdot
+				\begin{bmatrix}
+					- \nabla f_{t}\left(\mathbf{w}_{k}\right)\\
+					\mathbf{0}
+				\end{bmatrix}$\\
+				$\lambda^{2}\left(\mathbf{w}_{k}\right) = \Delta \mathbf{w}_{k}^{T} \nabla^{2} f_{t}\left(\mathbf{w}_{k}\right) \Delta \mathbf{w}_{k}$\\
+				$k = k+1$\\
+				\If{$\left(\frac{\lambda^{2}\left(\mathbf{w}_{k}\right)}{2} < \epsilon\right)$}
+				{
+					quit
+				}
+				$t = 1$\\
+				\While{$\left(\mathbf{w}_{k} + t \Delta \mathbf{w}_{k} \notin \{\mathbf{w} \in \textbf{dom}f_{0} \cap \textbf{dom}\phi \text{ } | \text{ } \mathbf{A}\mathbf{w} = \mathbf{b}\}\right)$}
+				{
+					$t = \beta t$\\
+				}
+				\While{$\left( f_{t}\left(\mathbf{w}_{k} + t \Delta \mathbf{w}_{k}\right) > f_{t}\left( \mathbf{w}_{k} \right) +\alpha t {\nabla f_{t}\left(\mathbf{w}_{k}\right)}^{T} \Delta \mathbf{w}_{k} \right)$}
+				{
+					$t = \beta t$\\
+				}
+				$\mathbf{w}_{k+1} = \mathbf{w}_{k} + t \Delta \mathbf{w}_{k}$\\
+			}
+\end{algorithm}
+
+
+\end{frame}
+
+
+
+
+\begin{frame}
+
+\frametitle{\textbf{Finding a feasible initial point}}
+
+\justifying
+Now, we will discuss how we can compute a feasible initial point needed for the algorithms described above. Such a point can be computed easily via CVX by solving the following optimization problem:
+
+\justifying
+\begin{equation}
+\begin{aligned}
+\label{eq:15}
+\min_{\mathbf{w}} \quad & {1} \\
+\textrm{s.t.} \quad & f_{i}\left(\mathbf{w}\right) \leq 0, i=1,2,\dots,m\\
+                             & \mathbf{A}\mathbf{w} = \mathbf{b}\\
+\end{aligned}
+\end{equation}
+
+\vspace{0.4cm}
+\justifying
+Next, we will see how we can compute a feasible initial point using the interior point barrier method. An approach of finding such a point for problem \eqref{eq:10} is by solving the following feasibility problem:
+
+\justifying
+\begin{equation}
+\begin{aligned}
+\label{eq:16}
+\min_{\mathbf{w} \in \mathbb{R}^{n},s \in \mathbb{R}} \quad & {s} \\
+\textrm{s.t.} \quad & f_{i}\left(\mathbf{w}\right) \leq s, i=1,2,\dots,m\\
+                             & \mathbf{A}\mathbf{w} = \mathbf{b}\\
+\end{aligned}
+\end{equation}
+
+
+
+\end{frame}
+
+
+
+
+
+
+\begin{frame}
+
+\justifying
+If there exists $\mathbf{w}$ such that $\mathbf{A}\mathbf{w} = \mathbf{b}$, let $\mathbf{\bar{w}}$, then problem \eqref{eq:16} is always strictly feasible, because we can let $\left(\mathbf{\bar{w}},\bar{s}\right)$ as initial point with:
+$$\bar{s} \geq \max\{f_{1}\left(\mathbf{w}\right), f_{2}\left(\mathbf{w}\right), \dots, f_{m}\left(\mathbf{w}\right) \}$$
+
+\vspace{0.8cm}
+\justifying
+If $p < n$, then the system $\mathbf{A}\mathbf{w} = \mathbf{b}$ has infinite solutions (remember the assumption that thr rows of matrix $\mathbf{A}$ are linearly independent. A solution is given by $\mathbf{\bar{w}} = \mathbf{A}^{\#}\mathbf{b}$, where $ \mathbf{A}^{\#}$ is the pseudo-inverse of matrix $\mathbf{A}$.
+
+\end{frame}
+
+
+
+
+\begin{frame}
+
+
+\justifying
+Let $\mathbf{\bar{w}}_{*}$ the optimal point and $\bar{p}_{*}$ the solution of problem \eqref{eq:16}. Then, it holds that:
+\begin{itemize}
+	\item If $\bar{p}_{*} > 0$, then problem \eqref{eq:10} is infeasible.
+	\item If $\bar{p}_{*} < 0$, then problem \eqref{eq:10} is feasible, and one feasible point for problem \eqref{eq:10} is $\mathbf{\bar{w}}_{*}.$
+	\justifying
+	\item If $\bar{p}_{*} = 0$, then problem \eqref{eq:10} is not strictly feasible.\\In practice, we may have $|\bar{p}_{*}| < \epsilon$ for a very small $\epsilon > 0$. In that case, inequalities $f_{i}\left(\mathbf{w}\right) < - \epsilon, i =1,2,\dots,m$, are not feasible, while inequalities $f_{i}\left(\mathbf{w}\right) < \epsilon, i =1,2,\dots,m$, are feasible.
+\end{itemize}
+
+\vspace{0.8cm}
+\justifying
+It is important to note that it is not necessary to solve problem \eqref{eq:16}.
+
+\vspace{0.4cm}
+\justifying
+It is enough to find a $\mathbf{w}$ that gives $s < 0$.
+
+
+\end{frame}
+
+
+
+
+
+
+\begin{frame}
+
+
+\frametitle{\textbf{Maximum return for a given target volatility}}
+
+\justifying
+The following problem is equivalent to the corresponding original, which can be solved with the interior point barrier method explained before:
+
+\justifying
+\begin{equation}
+\begin{aligned}
+\label{eq:17}
+\min_{\mathbf{w}} \quad & f_{0}\left(\mathbf{w}\right) \equiv - \boldsymbol\mu^{T} \mathbf{w} \\
+\textrm{s.t.} \quad & \mathbf{A} \mathbf{w} = \mathbf{b}  \textrm{ , where } \mathbf{A} \equiv \mathbf{1}^{T} \textrm{ and } \mathbf{b} \equiv 1 \\
+                             & f_{1,i}\left(\mathbf{w}\right) \equiv - w_{i} \leq 0 \textrm{ , } i = 1, 2, \dots n \\
+                             & f_{2,i}\left(\mathbf{w}\right) \equiv w_{i} - 1 \leq 0 \textrm{ , } i = 1, 2, \dots n \\
+                             & f_{3}\left(\mathbf{w}\right) \equiv \mathbf{w}^{T}\mathbf{\Sigma}\mathbf{w} - v \leq 0 \\
+\end{aligned}
+\end{equation}
+
+\vspace{0.4cm}
+\justifying
+The equivalence of the original problem and problem \eqref{eq:17} lies in the fact that inequality $f_{3}\left(\mathbf{w}\right)$ is going to be satisfied as an equality. This is because as we reducing the variance $v$ (volatility $\sqrt{v}$), the return decreases. But we want to maximize return, so the maximum return comes with exact variance value $v$.
+
+\end{frame}
+
+
+
+
+\begin{frame}
+
+\textbf{Phase I}
+
+\vspace{0.8cm}
+\justifying
+
+\justifying
+For the cost function $f_{0}\left(\mathbf{w},s\right)$ we have the following:
+\begin{itemize}
+	\item $f_{0}\left(\mathbf{w},s\right) = s$
+	\item $\nabla f_{0}\left(\mathbf{w},s\right) = \mathbf{e}_{n+1}$
+	\item $\nabla^{2}f_{0}\left(\mathbf{w},s\right) = \mathbf{0}$
+\end{itemize}
+
+\vspace{0.8cm}
+\justifying
+For the constraint function $f_{1,i}\left(\mathbf{w},s\right)$ we have the following:
+\begin{itemize}
+	\item $f_{1,i}\left(\mathbf{w},s\right) = - \mathbf{w}_{i} - s, i=1,2,\dots,n$
+	\item $\nabla f_{1,i}\left(\mathbf{w},s\right) = - \mathbf{e}_{i} - \mathbf{e}_{n+1}, i=1,2,\dots,n$
+	\item $\nabla^{2}f_{1,i}\left(\mathbf{w},s\right) = \mathbf{0}, i=1,2,\dots,n$
+\end{itemize}
+
+\end{frame}
+
+
+
+\begin{frame}
+
+\justifying
+For the constraint function $f_{2,i}\left(\mathbf{w},s\right)$ we have the following:
+\begin{itemize}
+	\item $f_{2,i}\left(\mathbf{w},s\right) = \mathbf{w}_{i} - 1 - s, i=1,2,\dots,n$
+	\item $\nabla f_{2,i}\left(\mathbf{w},s\right) = \mathbf{e}_{i} - \mathbf{e}_{n+1}, i=1,2,\dots,n$
+	\item $\nabla^{2}f_{2,i}\left(\mathbf{w},s\right) = \mathbf{0}, i=1,2,\dots,n$
+\end{itemize}
+
+\vspace{0.8cm}
+\justifying
+For the constraint function $f_{3}\left(\mathbf{w},s\right)$ we have the following:
+\begin{itemize}
+	\item $f_{3}\left(\mathbf{w},s\right) = \mathbf{w}^{T}\mathbf{\Sigma}\mathbf{w} - v - s$
+	\item $\nabla f_{3}\left(\mathbf{w},s\right) = \begin{bmatrix}
+										2\mathbf{\Sigma}\mathbf{w}\\
+										-1
+									\end{bmatrix}$
+	\item $\nabla^{2}f_{3}\left(\mathbf{w},s\right) = \begin{bmatrix}
+										2\mathbf{\Sigma} & \mathbf{0}\\
+										\mathbf{0} & 0
+									\end{bmatrix}$
+\end{itemize}
+
+\end{frame}
+
+
+
+\begin{frame}
+
+\justifying
+For the logarithmic barrier function $\phi\left(\mathbf{w},s\right)$ we have the following:
+\scriptsize
+\begin{flalign*}
+	\phi\left(\mathbf{w},s\right) = - \sum_{i=1}^{n} \log\left(\mathbf{w}_{i} + s\right) - \sum_{i=1}^{n} \log\left(s + 1 - \mathbf{w}_{i}\right) - \log\left(s + v - \mathbf{w}^{T}\mathbf{\Sigma}\mathbf{w}\right)
+	\end{flalign*}
+\begin{flalign*}
+		\nabla \phi\left(\mathbf{w},s\right) = \sum_{i=1}^{n} \frac{1}{\mathbf{w}_{i} + s} \left(-\mathbf{e}_{i} - \mathbf{e}_{n+1}\right) + \sum_{i=1}^{n} \frac{1}{s + 1 - \mathbf{w}_{i}} \left(\mathbf{e}_{i} - \mathbf{e}_{n+1}\right) + \frac{1}{s + v - \mathbf{w}^{T}\mathbf{\Sigma}\mathbf{w}} \begin{bmatrix}
+										2\mathbf{\Sigma}\mathbf{w}\\
+										-1
+									\end{bmatrix}
+									\end{flalign*}
+\begin{flalign*}
+		\nabla^{2}\phi\left(\mathbf{w},s\right) = & \sum_{i=1}^{n} \frac{1}{\left(- \mathbf{w}_{i} - s\right)^{2}}\left(-\mathbf{e}_{i}-\mathbf{e}_{n+1}\right) \left(-\mathbf{e}_{i}-\mathbf{e}_{n+1}\right)^{T} + \\ & + \sum_{i=1}^{n} \frac{1}{\left(\mathbf{w}_{i} - 1 - s\right)^{2}} \left(\mathbf{e}_{i}-\mathbf{e}_{n+1}\right) \left(\mathbf{e}_{i}-\mathbf{e}_{n+1}\right)^{T} + \\ & + \frac{1}{\left(\mathbf{w}^{T}\mathbf{\Sigma}\mathbf{w} - v - s\right)^{2}}\begin{bmatrix}
+										2\mathbf{\Sigma}\mathbf{w}\\
+										-1
+									\end{bmatrix}
+									\begin{bmatrix}
+										2\mathbf{\Sigma}\mathbf{w}\\
+										-1
+									\end{bmatrix} + \frac{1}{s + v - \mathbf{w}^{T}\mathbf{\Sigma}\mathbf{w}}\begin{bmatrix}
+										2\mathbf{\Sigma} & \mathbf{0}\\
+										\mathbf{0} & 0
+									\end{bmatrix}
+									\end{flalign*}
+
+\end{frame}
+
+
+
+
+
+\begin{frame}
+
+\textbf{Phase II}
+
+\vspace{0.8cm}
+\justifying
+
+\justifying
+For the cost function $f_{0}\left(\mathbf{w}\right)$ we have the following:
+\begin{itemize}
+	\item $f_{0}\left(\mathbf{w}\right) = - \boldsymbol\mu^{T} \mathbf{w}$
+	\item $\nabla f_{0}\left(\mathbf{w}\right) = - \boldsymbol\mu$
+	\item $\nabla^{2}f_{0}\left(\mathbf{w}\right) = \mathbf{0}$
+\end{itemize}
+
+\vspace{0.8cm}
+\justifying
+For the constraint function $f_{1,i}\left(\mathbf{w}\right)$ we have the following:
+\begin{itemize}
+	\item $f_{1,i}\left(\mathbf{w}\right) = - \mathbf{w}_{i}, i=1,2,\dots,n$
+	\item $\nabla f_{1,i}\left(\mathbf{w}\right) = - \mathbf{e}_{i}, i=1,2,\dots,n$
+	\item $\nabla^{2}f_{1,i}\left(\mathbf{w}\right) = \mathbf{0}, i=1,2,\dots,n$
+\end{itemize}
+
+\end{frame}
+
+
+
+\begin{frame}
+
+\justifying
+For the constraint function $f_{2,i}\left(\mathbf{w}\right)$ we have the following:
+\begin{itemize}
+	\item $f_{2,i}\left(\mathbf{w}\right) = \mathbf{w}_{i} - 1, i=1,2,\dots,n$
+	\item $\nabla f_{2,i}\left(\mathbf{w}\right) = \mathbf{e}_{i}, i=1,2,\dots,n$
+	\item $\nabla^{2}f_{2,i}\left(\mathbf{w}\right) = \mathbf{0}, i=1,2,\dots,n$
+\end{itemize}
+
+\vspace{0.8cm}
+\justifying
+For the constraint function $f_{3}\left(\mathbf{w}\right)$ we have the following:
+\begin{itemize}
+	\item $f_{3}\left(\mathbf{w}\right) = \mathbf{w}^{T}\mathbf{\Sigma}\mathbf{w} - v$
+	\item $\nabla f_{3}\left(\mathbf{w}\right) = 2 \mathbf{\Sigma} \mathbf{w}$
+	\item $\nabla^{2}f_{3}\left(\mathbf{w}\right) = 2\mathbf{\Sigma}$
+\end{itemize}
+
+\vspace{0.8cm}
+\justifying
+For the logarithmic barrier function $\phi\left(\mathbf{w}\right)$ we have the following:
+\scriptsize
+\begin{itemize}
+	\item $\phi\left(\mathbf{w}\right) = - \sum_{i=1}^{n} \log\left(\mathbf{w}_{i}\right) - \sum_{i=1}^{n} \log\left(1 - \mathbf{w}_{i}\right) - \log\left(v - \mathbf{w}^{T}\mathbf{\Sigma}\mathbf{w} \right) $
+	\item $\nabla \phi\left(\mathbf{w}\right) = - \sum_{i=1}^{n} \frac{1}{\mathbf{w}_{i}}\mathbf{e}_{i} - \sum_{i=1}^{n} \frac{1}{\mathbf{w}_{i} - 1} \mathbf{e}_{i} - \frac{1}{\mathbf{w}^{T}\mathbf{\Sigma}\mathbf{w} - v}2\mathbf{\Sigma}\mathbf{w}$
+	\item $\nabla^{2}\phi\left(\mathbf{w}\right) = \sum_{i=1}^{n} \frac{1}{\mathbf{w}_{i}^{2}}\mathbf{e}_{i} \mathbf{e}_{i}^{T} + \sum_{i=1}^{n} \frac{1}{\left(\mathbf{w}_{i} - 1\right)^{2}} \mathbf{e}_{i} \mathbf{e}_{i}^{T} + \frac{1}{\left(\mathbf{w}^{T}\mathbf{\Sigma}\mathbf{w} - v\right)^{2}}4\mathbf{\Sigma}\mathbf{w}\mathbf{w}^{T}\mathbf{\Sigma} + \frac{1}{v - \mathbf{w}^{T}\mathbf{\Sigma}\mathbf{w}}2\mathbf{\Sigma}$
+\end{itemize}
+
+\end{frame}
+
+
+
+
+\begin{frame}
+
+
+\frametitle{\textbf{Maximum Sharpe ratio}}
+
+\justifying
+The original problem of Sharpe ratio maximization is not convex and there is not any analytic algorithm to solve it. Next, we will see how we can transform it to another equivalent problem that is convex with linear inequality constraints and affine equality constraints.
+
+\vspace{0.8cm}
+\justifying
+The original problem after some unimportant changes in the notations takes the following form:
+\justifying
+\begin{equation}
+\begin{aligned}
+\label{eq:18}
+\max_{\mathbf{w}} \quad & SR \equiv \frac{\boldsymbol\mu^{T} \mathbf{w} - R_{f}}{\sqrt{\mathbf{w}^{T}\mathbf{\Sigma}\mathbf{w}}} \\
+\textrm{s.t.} \quad & \mathbf{A} \mathbf{w} = \mathbf{b} \textrm{ , where } \mathbf{A} \equiv \mathbf{1}^{T} \textrm{ and } \mathbf{b} \equiv 1  \\
+                             & \mathbf{w} \geq \mathbf{0} \\
+                             & \mathbf{C}\mathbf{w} \geq \mathbf{d} \textrm{ , where } \mathbf{C} \equiv -\mathbf{I}_{n} \textrm{ and } \mathbf{d} \equiv -\mathbf{1}  \\
+\end{aligned}
+\end{equation}
+
+\end{frame}
+
+
+
+
+\begin{frame}
+
+\justifying
+As we have already said, problem \eqref{eq:18} is difficult because of the nature of its objective. However, under a reasonable assumption, it can be reduced to a standard convex quadratic program.
+
+\vspace{0.8cm}
+\justifying
+The assumption we make is that there exists a vector $\mathbf{w}$ satisfying all the constraints of problem \eqref{eq:18} such that $\boldsymbol\mu^{T} \mathbf{w} - R_{f} > 0$. This assumption is reasonable as it simply says that our universe of assets is able to beat the risk-free rate of return.
+
+\vspace{0.8cm}
+\justifying
+Our approach is as follows. Given an asset vector $\mathbf{w}$, we define:
+$$
+f_{0}\left(\mathbf{w}\right) =  \frac{\boldsymbol\mu^{T} \mathbf{w} - R_{f}}{\sqrt{\mathbf{w}^{T}\mathbf{\Sigma}\mathbf{w}}}
+$$
+
+\end{frame}
+
+
+
+\begin{frame}
+
+\justifying
+Since $\mathbf{1}^{T}\mathbf{w} = 1$, we have:
+$$
+f_{0}\left(\mathbf{w}\right) =  \frac{\boldsymbol\mu^{T} \mathbf{w} - R_{f}}{\sqrt{\mathbf{w}^{T}\mathbf{\Sigma}\mathbf{w}}} = \frac{\boldsymbol\mu^{T} \mathbf{w} - R_{f}\mathbf{1}^{T}\mathbf{w}}{\sqrt{\mathbf{w}^{T}\mathbf{\Sigma}\mathbf{w}}} = \frac{\left(\boldsymbol\mu^{T} - R_{f}\mathbf{1}^{T}\right)\mathbf{w}}{\sqrt{\mathbf{w}^{T}\mathbf{\Sigma}\mathbf{w}}} = \frac{\hat{\boldsymbol\mu}^{T}\mathbf{w}}{\sqrt{\mathbf{w}^{T}\mathbf{\Sigma}\mathbf{w}}}
+$$
+where we define $\hat{\mu_{i}} = \mu_{i} - R_{f}, i = 1,2,\dots,n$.
+
+\vspace{0.8cm}
+\justifying
+Using this fact, we note that for any vector $\mathbf{w}$ with $\mathbf{1}^{T}\mathbf{w} = 1$ and any scalar $\lambda > 0$, it holds that $f_{0}\left(\lambda\mathbf{w}\right) = f_{0}\left(\mathbf{w}\right)$.
+
+\vspace{0.8cm}
+\justifying
+Now we can state our optimization problem.
+
+\vspace{0.8cm}
+\justifying
+Let $\hat{\mathbf{C}}$ be the matrix whose $i,j$-entry is $C_{i,j} - d_{i}$.
+
+\end{frame}
+
+
+
+\begin{frame}
+
+
+\justifying
+The problem we consider is:
+\justifying
+\begin{equation}
+\begin{aligned}
+\label{eq:19}
+\max_{\mathbf{y}} \quad & \frac{1}{\sqrt{\mathbf{y}^{T}\mathbf{\Sigma}\mathbf{y}}} \\
+\textrm{s.t.} \quad & \hat{\mathbf{A}} \mathbf{y} = \mathbf{b}, \textrm{ , where } \hat{\mathbf{A}} \equiv \hat{\boldsymbol\mu}^{T} \textrm{ and } \mathbf{b} \equiv 1  \\
+                             & \mathbf{y} \geq \mathbf{0} \\
+                             & \hat{\mathbf{C}}\mathbf{y} \geq \mathbf{0}
+\end{aligned}
+\end{equation}
+
+\vspace{0.8cm}
+\justifying
+To see that problems \eqref{eq:18} and \eqref{eq:19} are indeed equivalent, suppose that $\mathbf{y}_{*}$ is an optimal solution to \eqref{eq:19}. Notice that because of the equality constraint $\hat{\mathbf{A}} \mathbf{y} = \mathbf{b}$, $\mathbf{y}_{*}$ is not identically zero, and so by $\mathbf{y} \geq \mathbf{0}$, it is $\sum_{i=1}^{n}y_{*,i} > 0$. Define the vector:
+$$
+\mathbf{w}_{*} =  \frac{\mathbf{y}_{*}}{\sum_{i=1}^{n}y_{*,i}}
+$$
+
+
+\end{frame}
+
+
+
+\begin{frame}
+
+\justifying
+Then, by construction it holds that:
+$$
+\sum_{i=1}^{n}w_{*,i} = 1
+$$
+
+\vspace{0.4cm}
+\justifying
+Further, since $\mathbf{y}$ satisfies $\hat{\mathbf{C}}\mathbf{y} \geq \mathbf{0}$, then for any row $i$ we have that:
+$$
+\sum_{j=1}^{n} \left( c_{i,j} - d_{i} \right) y_{*,j} \geq 0
+$$
+
+\vspace{0.4cm}
+\justifying
+or in other words:
+$$
+\sum_{j=1}^{n} c_{i,j}y_{*,j} \geq \left(\sum_{j=1}^{n}y_{*,j}\right)d_{i}
+$$
+
+\vspace{0.4cm}
+\justifying
+And as a consequence:
+$$
+\sum_{j=1}^{n} c_{i,j}w_{*,j} \geq d_{i}
+$$
+
+\end{frame}
+
+
+
+
+\begin{frame}
+
+\justifying
+Therefore, $\mathbf{w}_{*}$ is feasible for problem \eqref{eq:18}. Further, as we observed before it holds that:
+$$
+f_{0}\left(\mathbf{w}_{*}\right) = f_{0}\left(\mathbf{y}_{*}\right) = \frac{1}{\sqrt{\mathbf{y}_{*}^{T}\mathbf{\Sigma}\mathbf{y}_{*}}}
+$$
+since $\hat{\boldsymbol\mu}^{T}\mathbf{y} = 1$.
+
+\vspace{0.4cm}
+\justifying
+In summary, the value of problem \eqref{eq:18} is at least as large as the value of problem \eqref{eq:19}. The converse is proved in a similar way. So, indeed, problems \eqref{eq:18} and  \eqref{eq:19} are equivalent.
+
+\vspace{0.4cm}
+\justifying
+So we just have to solve problem \eqref{eq:19}. But this is clearly equivalent to the following problem:
+\justifying
+\begin{equation}
+\begin{aligned}
+\label{eq:20}
+\min_{\mathbf{y}} \quad & \mathbf{y}^{T}\mathbf{\Sigma}\mathbf{y} \\
+\textrm{s.t.} \quad & \hat{\mathbf{A}} \mathbf{y} = \mathbf{b}, \textrm{ , where } \hat{\mathbf{A}} \equiv \hat{\boldsymbol\mu}^{T} \textrm{ and } \mathbf{b} \equiv 1  \\
+                             & \mathbf{y} \geq \mathbf{0} \\
+                             & \hat{\mathbf{C}}\mathbf{y} \geq \mathbf{0}
+\end{aligned}
+\end{equation}
+\justifying
+which is just a standard quadratic program.
+
+\end{frame}
+
+
+
+
+\begin{frame}
+
+
+\justifying
+In order to solve problem \eqref{eq:20}, using the interior point barrier method, we write it in the following form:
+
+\justifying
+\begin{equation}
+\begin{aligned}
+\label{eq:21}
+\min_{\mathbf{y}} \quad & f_{0}\left(\mathbf{y}\right) \equiv \mathbf{y}^{T}\mathbf{\Sigma}\mathbf{y} \\
+\textrm{s.t.} \quad & \mathbf{A} \mathbf{y} = \mathbf{b}  \textrm{ , where } \mathbf{A} \equiv \hat{\boldsymbol\mu}^{T} \textrm{ and } \mathbf{b} \equiv 1 \\
+                             & f_{1,i}\left(\mathbf{y}\right) \equiv - y_{i} \leq 0 \textrm{ , } i = 1, 2, \dots n \\
+                             & f_{2,i}\left(\mathbf{y}\right) \equiv -\hat{\mathbf{c}}_{i}^{T}\mathbf{y} \leq 0 \textrm{ , } i = 1, 2, \dots n \\
+\end{aligned}
+\end{equation}
+
+\vspace{0.4cm}
+\justifying
+Then, the solution to the original problem is given by:
+$$
+\mathbf{w} = \frac{\mathbf{y}}{\sum_{i=1}^{n}y_{i}}
+$$
+
+\end{frame}
+
+
+
+
+\begin{frame}
+
+\textbf{Phase I}
+
+\vspace{0.8cm}
+\justifying
+
+\justifying
+For the cost function $f_{0}\left(\mathbf{y},s\right)$ we have the following:
+\begin{itemize}
+	\item $f_{0}\left(\mathbf{y},s\right) = s$
+	\item $\nabla f_{0}\left(\mathbf{y},s\right) = \mathbf{e}_{n+1}$
+	\item $\nabla^{2}f_{0}\left(\mathbf{y},s\right) = \mathbf{0}$
+\end{itemize}
+
+\vspace{0.8cm}
+\justifying
+For the constraint function $f_{1,i}\left(\mathbf{y},s\right)$ we have the following:
+\begin{itemize}
+	\item $f_{1,i}\left(\mathbf{y},s\right) = - \mathbf{y}_{i} - s, i=1,2,\dots,n$
+	\item $\nabla f_{1,i}\left(\mathbf{y},s\right) = - \mathbf{e}_{i} - \mathbf{e}_{n+1}, i=1,2,\dots,n$
+	\item $\nabla^{2}f_{1,i}\left(\mathbf{y},s\right) = \mathbf{0}, i=1,2,\dots,n$
+\end{itemize}
+
+\end{frame}
+
+
+
+\begin{frame}
+
+\justifying
+For the constraint function $f_{2}\left(\mathbf{y},s\right)$ we have the following:
+\begin{itemize}
+	\item $f_{2,i}\left(\mathbf{y},s\right) = -\hat{\mathbf{c}_{i}}^{T}\mathbf{y} - s, i=1,2,\dots,n$
+	\item $\nabla f_{2,i}\left(\mathbf{y},s\right) = \begin{bmatrix}
+										\hat{\mathbf{c}_{i}}\\
+										0
+									\end{bmatrix} - \mathbf{e}_{n+1}, i=1,2,\dots,n$
+	\item $\nabla^{2}f_{2,i}\left(\mathbf{y},s\right) = \mathbf{0}, i=1,2,\dots,n$
+\end{itemize}
+
+
+\end{frame}
+
+
+
+\begin{frame}
+
+\justifying
+For the logarithmic barrier function $\phi\left(\mathbf{y},s\right)$ we have the following:
+$$
+	\phi\left(\mathbf{y},s\right) = - \sum_{i=1}^{n} \log\left(\mathbf{y}_{i} + s\right) - \sum_{i=1}^{n} \log\left(\hat{\mathbf{c}_{i}}^{T}\mathbf{y} + s\right)
+$$
+$$
+		\nabla \phi\left(\mathbf{y},s\right) = \sum_{i=1}^{n} \frac{1}{\mathbf{y}_{i} + s} \left(-\mathbf{e}_{i} - \mathbf{e}_{n+1}\right) + \sum_{i=1}^{n} \frac{1}{\hat{\mathbf{c}_{i}}^{T}\mathbf{y} + s} \left( - \begin{bmatrix}
+										\hat{\mathbf{c}_{i}}\\
+										0
+									\end{bmatrix} - \mathbf{e}_{n+1} \right)
+$$
+\begin{align*}
+		\nabla^{2}\phi\left(\mathbf{y},s\right) = & \sum_{i=1}^{n} \frac{1}{\left(- \mathbf{y}_{i} - s\right)^{2}}\left(-\mathbf{e}_{i}-\mathbf{e}_{n+1}\right) \left(-\mathbf{e}_{i}-\mathbf{e}_{n+1}\right)^{T} + \\ & + \sum_{i=1}^{n} \frac{1}{\left(-\hat{\mathbf{c}_{i}}^{T}\mathbf{y} - s \right)^{2}} \left( - \begin{bmatrix*}
+										\hat{\mathbf{c}_{i}}\\
+										0
+									\end{bmatrix*} - \mathbf{e}_{n+1} \right)
+									\left( - \begin{bmatrix*}
+										\hat{\mathbf{c}_{i}}\\
+										0
+									\end{bmatrix*} - \mathbf{e}_{n+1} \right)^{T}
+\end{align*}
+
+\end{frame}
+
+
+
+
+
+\begin{frame}
+
+\textbf{Phase II}
+
+\vspace{0.8cm}
+\justifying
+
+\justifying
+For the cost function $f_{0}\left(\mathbf{y}\right)$ we have the following:
+\begin{itemize}
+	\item $f_{0}\left(\mathbf{y}\right) = \mathbf{y}^{T}\mathbf{\Sigma}\mathbf{y}$
+	\item $\nabla f_{0}\left(\mathbf{y}\right) = 2\mathbf{\Sigma}\mathbf{y}$
+	\item $\nabla^{2}f_{0}\left(\mathbf{y}\right) = 2\mathbf{\Sigma}$
+\end{itemize}
+
+\vspace{0.8cm}
+\justifying
+For the constraint function $f_{1,i}\left(\mathbf{y}\right)$ we have the following:
+\begin{itemize}
+	\item $f_{1,i}\left(\mathbf{y}\right) = - \mathbf{y}_{i}, i=1,2,\dots,n$
+	\item $\nabla f_{1,i}\left(\mathbf{y}\right) = - \mathbf{e}_{i}, i=1,2,\dots,n$
+	\item $\nabla^{2}f_{1,i}\left(\mathbf{y}\right) = \mathbf{0}, i=1,2,\dots,n$
+\end{itemize}
+
+\end{frame}
+
+
+
+\begin{frame}
+
+\justifying
+For the constraint function $f_{2,i}\left(\mathbf{y}\right)$ we have the following:
+\begin{itemize}
+	\item $f_{2,i}\left(\mathbf{y}\right) = -\hat{\mathbf{c}_{i}}^{T}\mathbf{y}, i=1,2,\dots,n$
+	\item $\nabla f_{2,i}\left(\mathbf{y}\right) = -\hat{\mathbf{c}_{i}}, i=1,2,\dots,n$
+	\item $\nabla^{2}f_{2,i}\left(\mathbf{y}\right) = \mathbf{0}, i=1,2,\dots,n$
+\end{itemize}
+
+\vspace{0.8cm}
+\justifying
+For the logarithmic barrier function $\phi\left(\mathbf{y}\right)$ we have the following:
+\begin{itemize}
+	\item $\phi\left(\mathbf{y}\right) = - \sum_{i=1}^{n} \log\left(\mathbf{y}_{i}\right) - \sum_{i=1}^{n} \log\left(\hat{\mathbf{c}_{i}}^{T}\mathbf{y}\right) $
+	\item $\nabla \phi\left(\mathbf{y}\right) = - \sum_{i=1}^{n} \frac{1}{\mathbf{y}_{i}}\mathbf{e}_{i} - \sum_{i=1}^{n} \frac{1}{\hat{\mathbf{c}_{i}}^{T}\mathbf{y}} \hat{\mathbf{c}_{i}}$
+	\item $\nabla^{2}\phi\left(\mathbf{y}\right) = \sum_{i=1}^{n} \frac{1}{\mathbf{y}_{i}^{2}}\mathbf{e}_{i} \mathbf{e}_{i}^{T} + \sum_{i=1}^{n} \frac{1}{\left(\hat{\mathbf{c}_{i}}^{T}\mathbf{y}\right)^{2}} \hat{\mathbf{c}_{i}} \hat{\mathbf{c}_{i}}^{T}$
+\end{itemize}
+
+\end{frame}
+
+
+
+
+
+
+\subsection{Fast Dual Proximal Gradient (FDPG) Method}
+
+
+\begin{frame}
+
+
+
+\frametitle{\textbf{Fast Dual Proximal Gradient (FDPG) Method}}
+
+
+\justifying
+Consider the following optimization problem:
+\begin{equation}
+	\label{eq:22}
+	f_{opt} = \min_{\mathbf{w} \in \mathbb{E}} {f\left(\mathbf{w}\right) + g\left(\mathcal{A}(\mathbf{w})\right)}
+\end{equation}
+where the following assumptions are made:
+\begin{itemize}
+	\item $f : \mathbb{E} \rightarrow (-\infty,+\infty]$ is proper, closed and $\sigma$-strongly convex.
+	\item $g : \mathbb{V} \rightarrow (-\infty,+\infty]$ is proper, closed and convex.
+	\item $\mathcal{A} : \mathbb{E} \rightarrow \mathbb{V}$ is a linear transformation.
+	\item There exists $\hat{\mathbf{w}} \in \text{ri}(\text{dom}(f))$ and $\hat{\mathbf{z}} \in \text{ri}(\text{dom}(g))$ such that $\mathcal{A}(\hat{\mathbf{w}}) = \hat{\mathbf{z}}$.
+\end{itemize}
+This problem has a unique optimal solution, which we denote by $\mathbf{w}_{*}$.
+
+\vspace{0.4cm}
+\justifying
+The Fast Dual Proximal Gradient (FDPG) Method, that solves problem \eqref{eq:22} and achieves a $\mathcal{O}\left(\frac{1}{k^2}\right)$ rate of convergence of the primal sequence, takes the following form:
+
+\end{frame}
+
+
+
+
+\begin{frame}
+
+\justifying
+\begin{algorithm}[H]
+			\caption{The Fast Dual Proximal Gradient (FDPG) Method}\label{alg:4}
+			$\mathbf{s}_{0} = \mathbf{y}_{0} \in \mathbb{V}, t_{0} = 1, k = 0, L \geq L_{F} = \frac{\|\mathcal{A}\|^{2}}{\sigma}$\\
+			\While{$(1)$}
+			{
+				$\mathbf{u}_{k} = \underset{\mathbf{u}}{\mathrm{argmax}} \biggl\{ \langle \mathbf{u},\mathcal{A}^{T}(\mathbf{s}_{k}) \rangle - f(\mathbf{u}) \biggl\}$\\
+				$\mathbf{y}_{k+1} = \mathbf{s}_{k} - \frac{1}{L} \mathcal{A}(\mathbf{u}_{k}) + \frac{1}{L} \text{prox}_{L g}(\mathcal{A}(\mathbf{u}_{k}) - L\mathbf{z}_{k})$\\
+				$t_{k+1} = \frac{1 + \sqrt{1 + 4t_{k}^{2}}}{2}$\\
+				$\mathbf{s}_{k+1} = \mathbf{y}_{k+1} + \left(\frac{t_{k}-1}{t_{k+1}}\right)(\mathbf{y}_{k+1} - \mathbf{y}_{k})$\\
+				$k = k+1$\\
+				\If{$(convergence)$}
+				{
+					quit
+				}
+			}
+\end{algorithm}
+
+\vspace{0.2cm}
+\justifying
+Here, the primal sequence is given by $\mathbf{w}_{k} = \underset{\mathbf{w \in \mathbb{E}}}{\mathrm{argmax}} \biggl\{ \langle \mathbf{w},\mathcal{A}^{T}(\mathbf{y}_{k}) \rangle - f(\mathbf{w}) \biggl\}$.\\
+
+\end{frame}
+
+
+
+
+
+\begin{frame}
+
+
+\justifying
+Let $\mathbf{d},\mathbf{v}_{1},\mathbf{v}_{2} \in \mathbb{R}^{n}$, with $\mathbf{v}_{1} \leq \mathbf{v}_{2}$, $\mathbf{A} \in \mathbb{R}^{m \times n}$ and $\mathbf{b} \in \mathbb{R}^{m}$. We want to compute the projection of $\mathbf{d}$ onto set $C = \{\mathbf{w} \in \mathbb{R}^{n} | \mathbf{A}\mathbf{w} = \mathbf{b}, \mathbf{v}_{1} \leq \mathbf{w} \leq \mathbf{v}_{2}\}$.
+
+\vspace{0.4cm}
+\justifying
+In essence, we have to compute an orthogonal projection onto the intersection of closed convex sets. Given $p$ closed and convex sets $C_{1},\dots,C_{p} \subset \mathbb{E}$ and a point $\mathbf{d} \in \mathbb{E}$, the orthogonal projection of $\mathbf{d}$ onto the intersection is the optimal solution of the problem
+\begin{equation}
+	\label{eq:23}
+	\min_{\mathbf{w} \in \mathbb{R}^{n}} \biggl\{ \frac{1}{2} \|\mathbf{w} - \mathbf{d}\|^{2} : \mathbf{w} \in \cap_{i = 1}^{p}C_{i} \biggl\}
+\end{equation}
+
+\vspace{0.4cm}
+\justifying
+We will assume that the intersection $\cap_{i = 1}^{p}C_{i}$ is nonempty and that projecting onto each set $C_{i}$ is an easy task. Problem \eqref{eq:23} fits model \eqref{eq:22} with $\mathbb{V} = \mathbb{E}^{p}$, $\mathcal{A}(\mathbf{z}) = (\mathbf{z}, \mathbf{z}, \dots, \mathbf{z})$ (this is p times) for any $\mathbf{z} \in \mathbb{E}$, $f(\mathbf{w}) = \frac{1}{2} \|\mathbf{w} - \mathbf{d}\|^{2}$ and $g(\mathbf{w}_{1},\mathbf{w}_{2},\dots,\mathbf{w}_{p}) = \sum_{i=1}^{p} \delta_{C_{i}}(\mathbf{w}_{i})$.
+
+\end{frame}
+
+
+
+
+
+\begin{frame}
+
+
+\justifying
+We have that:
+\begin{itemize}
+	\item $\text{argmax}_{\mathbf{w}} \{\langle\mathbf{v},\mathbf{w}\rangle - f(\mathbf{w})\} = \mathbf{v} + \mathbf{d}$ for any $\mathbf{v} \in \mathbb{E}$
+	\item $\|\mathcal{A}\| = p$
+	\item $\sigma = 1$
+	\item $\mathcal{A}^{T}(\mathbf{y}) = \sum_{i=1}^{p} y_{i}$ for any $\mathbf{y} \in \mathbb{E}^{p}$
+	\item $\text{prox}_{L g}(\mathbf{v}_1,\mathbf{v}_2,\dots,\mathbf{v}_{p}) = (P_{C_1}(\mathbf{v}_{1}), P_{C_2}(\mathbf{v}_{2}), \dots, P_{C_p}(\mathbf{v}_{p}))$ for any $\mathbf{v} \in \mathbb{E}^{p}$.
+\end{itemize}
+
+\vspace{0.8cm}
+\justifying
+Using these facts, the FDPG method for solving problem \eqref{eq:23} can be explicitly written as follows:
+
+\end{frame}
+
+
+
+
+\begin{frame}
+
+\justifying
+\begin{algorithm}[H]
+			$\mathbf{s}_{0} = \mathbf{y}_{0} \in \mathbb{R}^{m}, t_{0} = 1, k = 0, L \geq \|\mathbf{A}\|_{2,2}^{2}$\\
+			\While{$(1)$}
+			{
+				$\mathbf{u}_{k} = \sum_{i=1}^{p} {\mathbf{s}_{i,k}} +\mathbf{d} $\\
+				$\mathbf{y}_{i,k+1} = \mathbf{s}_{i,k} - \frac{1}{L} \mathbf{u}_{k} + \frac{1}{L} P_{C_i}(\mathbf{u}_{k} - L\mathbf{s}_{i,l})$ for $i = 1,2,\dots,p$\\
+				$t_{k+1} = \frac{1 + \sqrt{1 + 4t_{k}^{2}}}{2}$\\
+				$\mathbf{s}_{k+1} = \mathbf{y}_{k+1} + \left(\frac{t_{k}-1}{t_{k+1}}\right)(\mathbf{y}_{k+1} - \mathbf{y}_{k})$\\
+				$k = k+1$\\
+				\If{$(convergence)$}
+				{
+					quit
+				}
+			}
+\end{algorithm}
+
+\vspace{0.4cm}
+\justifying
+Remember that the primal sequence is given by $\mathbf{w}_{k} = \mathbf{A}^{T}\mathbf{y}_{k} + \mathbf{d}$.\\
+
+\vspace{0.4cm}
+\justifying
+For convergence we check whether $\|\frac{\mathbf{w}_{k} - \mathbf{w}_{k+1}}{\mathbf{w}_{k}}\|_{2} \approx 0$.
+
+\end{frame}
+
+
+
+
+\begin{frame}
+
+
+\justifying
+In our problems, we adjust the corresponding constraints to an appropriate form of $\mathbf{A}\mathbf{w} = \mathbf{b}$ along with box constraints, in order to compute the projections needed.
+
+\vspace{0.4cm}
+\justifying
+We have that $C = C_{1}\cap C_{2}$, where:\\
+$C_{1} = \{\mathbf{w} \in \mathbb{R}^{n} : \mathbf{A}\mathbf{w} = \mathbf{b}\}$ and $C_{2} = \{\mathbf{w} \in \mathbb{R}^{n} : \mathbf{v}_1 \leq \mathbf{w} \leq \mathbf{v}_2\}$.
+
+\vspace{0.4cm}
+\justifying
+The projections onto set $C_{1}$ is given by:\\
+$P_{C_{1}}(\mathbf{w}) = \mathbf{w} - \mathbf{A}^{T}(\mathbf{A}\mathbf{A}^{T})^{-1}(\mathbf{A}\mathbf{w}-\mathbf{b})$.
+
+\vspace{0.4cm}
+\justifying
+In particular, we will have either
+$\begin{bmatrix}
+\mathbf{1}^{T}
+\end{bmatrix}
+\cdot
+\mathbf{w} =
+\begin{bmatrix}
+0
+\end{bmatrix}$
+or
+$\begin{bmatrix}
+\mathbf{1}^{T}\\
+\boldsymbol\mu^{T}
+\end{bmatrix}
+\cdot
+\mathbf{w} =
+\begin{bmatrix}
+0\\
+r
+\end{bmatrix}$
+
+\vspace{0.4cm}
+\justifying
+The projection onto set $C_{2}$ is given by:\\
+$P_{C_2}(\mathbf{w}) = P_{\text{Box}[\mathbf{v}_1,\mathbf{v}_2]}(\mathbf{w})_i = \text{min}\{\text{max}\{w_i,v_{1,i}\},v_{2,i}\} \text{ for } i = 1, \dots, n$.
+
+\vspace{0.4cm}
+\justifying
+With this algorithm we compute the projections needed for the other algorithms mentioned before.
+
+\end{frame}
+
+
+
+\end{document}
